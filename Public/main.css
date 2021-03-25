@@ -1,0 +1,174 @@
+body {
+  margin: 0px;
+  padding: 0px;
+  background-color: white;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+#overlay {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+}
+#sliders {
+  position: relative;
+  overflow: auto;
+}
+#info {
+  position: relative;
+  overflow: auto;
+  width: 30%;
+  z-index: 1;
+}
+
+canvas {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100vw;
+  height: 100vh;
+  max-width: 100%;
+  max-height: 100%;
+  -webkit-appearance: none;
+}
+
+#infoModule {
+  position: relative;
+  padding-left: 30px;
+}
+#generalDescription {
+  overflow: auto;
+  font-size: smaller;
+  margin-top: 50px;
+  height: calc(100vh - 400px);
+}
+
+h1 {
+  color: #3d3d3d;
+  padding-left: 30px;
+}
+
+.sliderModule {
+  position: relative;
+  padding-left: 25px;
+  width: 350px;
+  height: 70px;
+  float: left;
+}
+
+.sliderProperty {
+  position: relative;
+  padding-left: 5px;
+  float: left;
+}
+label {
+  position: absolute;
+  left: 10px;
+  margin-top: 20px;
+
+  font-size: x-small;
+  color: #3d3d3d;
+}
+
+#moduleName {
+  position: absolute;
+  left: 30px;
+  margin-top: 40px;
+
+  color: #3d3d3d;
+}
+
+.button {
+  position: relative;
+  margin-top: 2px;
+  background-color: #8b8b8b;
+  border: none;
+  color: #000000;
+
+  text-align: center;
+  width: 100px;
+  height: 30px;
+  opacity: 0.5;
+}
+.button:hover {
+  opacity: 1; /* Fully shown on mouse-over */
+}
+
+.slider {
+  overflow: hidden;
+  height: 30px;
+  width: 100px;
+  -webkit-appearance: none;
+  opacity: 0.5;
+  -webkit-transition: 0.2s;
+  transition: opacity 0.2s;
+  background: #8b8b8b;
+}
+.slider:hover {
+  opacity: 1; /* Fully shown on mouse-over */
+}
+/* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox)) */
+.slider::-webkit-slider-thumb {
+  width: 2px;
+  -webkit-appearance: none;
+  height: 100px;
+  cursor: ew-resize;
+  background: #0e0e0e;
+  box-shadow: -80px 0 0 80px #aa6d33;
+}
+
+#loader {
+  border: 5px solid #f3f3f3;
+  border-top: 5px solid #3d3d3d;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 2;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+#logoWhite {
+  position: absolute;
+  width: 177px;
+  height: 50px;
+  bottom: 50px;
+  right: 50px;
+  z-index: 2;
+}
+
+#dsearch {
+  position: absolute;
+  bottom: 50px;
+  right: 247px;
+  color: #ffffff;
+  z-index: 2;
+  font-size: x-large;
+  font-weight: bold;
+  text-decoration: none;
+}
+#dsearch:hover {
+  color: hotpink;
+}
+
+.label2d {
+  color: #fff;
+  font-family: sans-serif;
+  padding: 2px;
+  background: rgba(0, 0, 0, 0.6);
+  opacity: 0.5;
+}
+.label2d:hover {
+  opacity: 1;
+}
