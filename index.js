@@ -19,7 +19,38 @@ app.listen(port, () => {
 app.use(express.static("Public"));
 app.use(express.json({ limit: "100mb" }));
 
-//get request from client 200year pavilion
+app.get("/contentful", async (req, res) => {
+  client
+    .getEntries({
+      content_type: "model",
+    })
+    .then((entries) => {
+      let models = entries.items;
+      res.json({
+        models,
+      });
+    }, []);
+});
+
+app.get("/contentful/:slug", async (req, res) => {
+  const slug = req.params.slug;
+
+  client
+    .getEntries({
+      content_type: "model",
+      "fields.slug": slug,
+    })
+    .then((entries) => {
+      let model = entries.items[0];
+      res.json({
+        Title: model.fields.title,
+        shortDescription: model.fields.shortDescription,
+        slug: model.fields.slug,
+        params: model.fields.params,
+      });
+    }, []);
+});
+
 app.get("/modelData/:modelName/", async (request, response) => {
   const modelName = request.params.modelName;
 
@@ -125,4 +156,8 @@ app.get("/modelData/:modelName/", async (request, response) => {
       }
     );
   });
+});
+
+app.get("*", function (req, res) {
+  res.sendFile(__dirname + "/public/index.html");
 });

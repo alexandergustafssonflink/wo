@@ -1,5 +1,3 @@
-var contentful = require("contentful");
-
 //SETUP PARAMETERS
 let rhOutGeometry = null;
 let rhOutMaterial = null;
@@ -7,7 +5,7 @@ let rhOutText = null;
 let rhOutTextPt = null;
 
 // const materialsGhNames = ["WoodMissing", "Wood", "Transparent"];
-const materialsGhNames = ["CardBoard"];
+const materialsGhNames = ["WoodMissing"];
 
 const materials = [
   new THREE.MeshStandardMaterial({
@@ -27,7 +25,7 @@ const planeMaterial = new THREE.MeshStandardMaterial({
 // THREE.JS setup
 var scene, camera, renderer, controls;
 
-function init() {
+function modelInit() {
   renderer = new THREE.WebGLRenderer({
     canvas: document.querySelector("canvas"),
     antialias: true,
@@ -153,58 +151,88 @@ function addObjectsToScene(data) {
     obj.receiveShadow = true;
     threeMesh.add(obj);
   }
-
   scene.add(threeMesh);
 }
 
-//RUN FUNCTIONS
-init();
-animate();
+async function getModelFromContentful(modelName) {
+  let contentUrl = `/contentful/${modelName}`;
 
-// let params = {
-//   panelX: 5000,
-//   panelY: 5000,
-// };
+  // request model info from backend
+  const response = await fetch(contentUrl);
+  const json = await response.json();
 
-function getQueryFromParams(params) {
-  let paramsArray = Object.keys(params).map((key) => [key, params[key]]);
-
-  let q = paramsArray.map((a) => {
-    return `${a[0]}=${a[1]}`;
-  });
-
-  let query = q.join("&");
-  return query;
+  return json;
 }
 
-let projectName = "200yrPavilion";
+async function getModelsFromContentful() {
+  let contentUrl = "/contentful";
 
-let params = {
-  m1width: 0,
-  m1top1: 0,
-  m1top2: 0,
-  m2width: 0,
-  m2top1: 0,
-  m2top2: 0,
-  m3width: 0,
-  m3top1: 0,
-  m3top2: 0,
-};
+  // request model info from backend
+  const response = await fetch(contentUrl);
+  const json = await response.json();
 
-let query = getQueryFromParams(params);
+  return json;
+}
+
+let pathName = window.location.pathname;
+let modelName = pathName.replace("/", "");
+function init() {
+  if (pathName !== "/") {
+    modelInit();
+    animate();
+    (async () => {
+      let model = await getModelFromContentful(modelName);
+      console.log(model);
+
+      let modelHeader = document.querySelector(".model-header");
+      modelHeader.innerText = model.Title;
+      let modelDescription = document.querySelector(".model-description");
+      modelDescription.innerText = model.shortDescription;
+
+      let params = model.params;
+      let paramsArray = Object.keys(params).map((key) => [key, params[key]]);
+      let q = paramsArray.map((a) => {
+        return `${a[0]}=${a[1]}`;
+      });
+      let query = q.join("&");
+
+      rhinoCall(query).then((data) => {
+        console.log("Geometry recieved");
+        document.getElementById("loader").style.display = "none";
+        addObjectsToScene(data);
+      });
+    })();
+  } else {
+    let canvas = document.querySelector("#canvas");
+
+    canvas.classList.add("hidden");
+
+    (async () => {
+      let m = await getModelsFromContentful();
+      let models = m.models;
+      models.forEach((m) => {
+        let div = document.createElement("div");
+        div.classList.add("model-div");
+        let a = document.createElement("a");
+        let h = document.createElement("h3");
+        let p = document.createElement("p");
+        h.innerText = m.fields.title;
+        p.innerText = m.fields.shortDescription;
+        a.href = m.fields.slug;
+        a.appendChild(h);
+        document.body.appendChild(div);
+        div.appendChild(a);
+        div.appendChild(p);
+      });
+      document.getElementById("loader").style.display = "none";
+    })();
+  }
+}
+init();
 
 async function rhinoCall(query) {
-  let apiUrl = `/modelData/${projectName}?${query}`;
+  let apiUrl = `/modelData/${modelName}?${query}`;
   const response = await fetch(apiUrl);
   const json = await response.json();
   return json;
 }
-
-//get rhino objects
-rhinoCall(query).then((data) => {
-  console.log("Geometry recieved");
-
-  document.getElementById("loader").style.display = "none";
-
-  addObjectsToScene(data);
-});
