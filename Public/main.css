@@ -10,10 +10,7 @@ body {
   z-index: 1;
   width: 100%;
 }
-#sliders {
-  position: relative;
-  overflow: auto;
-}
+
 #info {
   position: relative;
   overflow: auto;
@@ -61,14 +58,6 @@ h1 {
   padding-left: 5px;
   float: left;
 }
-label {
-  position: absolute;
-  left: 10px;
-  margin-top: 20px;
-
-  font-size: x-small;
-  color: #3d3d3d;
-}
 
 #moduleName {
   position: absolute;
@@ -94,7 +83,7 @@ label {
   opacity: 1; /* Fully shown on mouse-over */
 }
 
-.slider {
+/* .slider {
   overflow: hidden;
   height: 30px;
   width: 100px;
@@ -106,16 +95,16 @@ label {
 }
 .slider:hover {
   opacity: 1; /* Fully shown on mouse-over */
-}
+/* } */
 /* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox)) */
-.slider::-webkit-slider-thumb {
+/* .slider::-webkit-slider-thumb {
   width: 2px;
   -webkit-appearance: none;
   height: 100px;
   cursor: ew-resize;
   background: #0e0e0e;
   box-shadow: -80px 0 0 80px #aa6d33;
-}
+} */
 
 #loader {
   border: 5px solid #f3f3f3;
@@ -194,4 +183,22 @@ h3 {
 
 .model-description {
   margin: 30px;
+}
+
+.slider-section {
+  position: absolute;
+  z-index: 100;
+  margin-left: 30px;
+}
+
+.slider-div {
+  margin-bottom: 10px;
+  font-size: 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  color: #3d3d3d;
+  font-size: 14px;
 }

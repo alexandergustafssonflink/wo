@@ -125,10 +125,8 @@ function addObjectsToScene(data) {
   let labels = data.labels;
 
   for (let i = 0; i < volumes.length; i++) {
-    //is this still valid  in latest build?
     let mesh = volumes[i].meshThree;
     let matName = volumes[i].material;
-
     let materialToAssign = null;
     for (let j = 0; j < materialsGhNames.length; j++) {
       if (materialsGhNames[j] === matName) {
@@ -154,6 +152,15 @@ function addObjectsToScene(data) {
   scene.add(threeMesh);
 }
 
+function removeObjectsFromScene() {
+  //throws error with multiple objects to remove, no idea why
+  scene.traverse((child) => {
+    if (child.type === "Object3D") {
+      scene.remove(child);
+    }
+  });
+}
+
 async function getModelFromContentful(modelName) {
   let contentUrl = `/contentful/${modelName}`;
 
@@ -166,8 +173,6 @@ async function getModelFromContentful(modelName) {
 
 async function getModelsFromContentful() {
   let contentUrl = "/contentful";
-
-  // request model info from backend
   const response = await fetch(contentUrl);
   const json = await response.json();
 
@@ -176,25 +181,34 @@ async function getModelsFromContentful() {
 
 let pathName = window.location.pathname;
 let modelName = pathName.replace("/", "");
+
 function init() {
   if (pathName !== "/") {
     modelInit();
     animate();
+    createSliders();
+
     (async () => {
       let model = await getModelFromContentful(modelName);
-      console.log(model);
 
       let modelHeader = document.querySelector(".model-header");
       modelHeader.innerText = model.Title;
       let modelDescription = document.querySelector(".model-description");
       modelDescription.innerText = model.shortDescription;
+      console.log(model);
 
       let params = model.params;
-      let paramsArray = Object.keys(params).map((key) => [key, params[key]]);
-      let q = paramsArray.map((a) => {
-        return `${a[0]}=${a[1]}`;
+      let q = params.map((p) => {
+        return `${p.name}=${p.defaultValue}`;
       });
+
       let query = q.join("&");
+
+      // let paramsArray = Object.keys(params).map((key) => [key, params[key]]);
+
+      // let w = paramsArray.map((a) => {
+      //   return `${a[0]}=${a[1]}`;
+      // });
 
       rhinoCall(query).then((data) => {
         console.log("Geometry recieved");
@@ -227,6 +241,64 @@ function init() {
       document.getElementById("loader").style.display = "none";
     })();
   }
+}
+
+function createSliders() {
+  (async () => {
+    let model = await getModelFromContentful(modelName);
+    let params = model.params;
+    let sliderSection = document.querySelector(".slider-section");
+
+    params.forEach((p) => {
+      let label = document.createElement("label");
+      let input = document.createElement("input");
+      let sliderDiv = document.createElement("div");
+      sliderDiv.classList.add("slider-div");
+      sliderSection.appendChild(sliderDiv);
+      input.type = p.type;
+      input.classList.add("slider");
+      input.name = p.name;
+      input.min = p.minValue;
+      input.max = p.maxValue;
+      input.onchange = function () {
+        onSliderChange();
+      };
+      input.step = p.step;
+      input.value = p.defaultValue;
+      label.setAttribute("for", p.name);
+      label.innerText = p.name;
+      sliderDiv.appendChild(label);
+      sliderDiv.appendChild(input);
+    });
+  })();
+}
+
+function onSliderChange() {
+  document.getElementById("loader").style.display = "block";
+  let sliders = document.querySelectorAll(".slider");
+  let sliderParams = [];
+  sliders.forEach((s) => {
+    let name = s.name;
+    let value = s.value;
+    let obj = {};
+    let key = "name";
+    obj[key] = name;
+    obj["value"] = value;
+    sliderParams.push(obj);
+  });
+
+  let q = sliderParams.map((p) => {
+    return `${p.name}=${p.value}`;
+  });
+
+  let query = q.join("&");
+
+  rhinoCall(query).then((data) => {
+    console.log("Geometry recieved");
+    document.getElementById("loader").style.display = "none";
+    removeObjectsFromScene();
+    addObjectsToScene(data);
+  });
 }
 init();
 
