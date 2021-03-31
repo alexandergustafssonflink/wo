@@ -12,7 +12,7 @@ const client = contentful.createClient({
   accessToken: "3yRd8Ffv9EgAFYey8-ij76coveHRFL13hgPv07aOQgg",
 });
 
-const port = process.env.PORT || 1337;
+const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`listening at ${port}`);
 });
@@ -42,11 +42,13 @@ app.get("/contentful/:slug", async (req, res) => {
     })
     .then((entries) => {
       let model = entries.items[0];
+
       res.json({
         Title: model.fields.title,
         shortDescription: model.fields.shortDescription,
         slug: model.fields.slug,
         params: model.fields.params,
+        model: model.fields.model.fields.file.url,
       });
     }, []);
 });
@@ -86,8 +88,11 @@ app.get("/modelData/:modelName/", async (request, response) => {
 
     for (var propName in request.query) {
       if (request.query.hasOwnProperty(propName)) {
+        // console.log(propName);
+        // console.log(request.query[propName]);
         let par = new RhinoCompute.Grasshopper.DataTree("RH_IN:" + propName);
-        par.append([0], [request.query[propName]]);
+        let paramValue = request.query[propName];
+        par.append([0], [paramValue]);
         trees.push(par);
       }
     }
