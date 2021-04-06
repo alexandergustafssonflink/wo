@@ -6,6 +6,7 @@ const RhinoCompute = require("compute-rhino3d");
 require("dotenv").config();
 var fs = require("file-system");
 const contentful = require("contentful");
+const richText = require("@contentful/rich-text-html-renderer");
 
 const client = contentful.createClient({
   space: "ixvvc8rtq4c0",
@@ -18,6 +19,8 @@ app.listen(port, () => {
 });
 app.use(express.static("Public"));
 app.use(express.json({ limit: "100mb" }));
+
+let richTextToHtmlString = richText.documentToHtmlString;
 
 app.get("/contentful", async (req, res) => {
   client
@@ -42,9 +45,11 @@ app.get("/contentful/:slug", async (req, res) => {
     })
     .then((entries) => {
       let model = entries.items[0];
+      let description = richTextToHtmlString(model.fields.description);
 
       res.json({
         Title: model.fields.title,
+        description: description,
         shortDescription: model.fields.shortDescription,
         slug: model.fields.slug,
         params: model.fields.params,
