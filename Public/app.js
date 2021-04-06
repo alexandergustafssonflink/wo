@@ -33,6 +33,16 @@ function modelInit() {
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFShadowMap; // default THREE.PCFShadowMap
   renderer.setClearColor(0x66ccff, 1.0);
+
+  labelRenderer = new THREE.CSS2DRenderer();
+  labelRenderer.setSize(window.innerWidth, window.innerHeight);
+  labelRenderer.domElement.style.position = "absolute";
+  labelRenderer.domElement.style.top = "0px";
+  labelRenderer.domElement.id = "labels2d";
+  labelRenderer.domElement.style.display = "none";
+  document.body.appendChild(labelRenderer.domElement);
+
+  //Funkar för Humt
   // camera = new THREE.PerspectiveCamera(45, 2, 1, 50000);
   camera = new THREE.PerspectiveCamera(
     45,
@@ -42,10 +52,14 @@ function modelInit() {
   );
   camera.position.set(-10000, 1000, -50000);
 
-  let d = 47000;
+  // funkar för 200
+  // camera = new THREE.PerspectiveCamera(45, 2, 1, 50000);
+  // camera.position.set(-8000, 2000, -10000);
 
   scene = new THREE.Scene();
 
+  let d = 47000;
+  scene = new THREE.Scene();
   scene.background = new THREE.TextureLoader().load("Textures/Background.jpg");
 
   //lightning
@@ -107,7 +121,7 @@ var animate = function () {
   requestAnimationFrame(animate);
   controls.update();
   renderer.render(scene, camera);
-  //   labelRenderer.render(scene, camera);
+  labelRenderer.render(scene, camera);
 };
 
 function maxObjSize(obj) {
@@ -149,7 +163,47 @@ function addObjectsToScene(data) {
     obj.receiveShadow = true;
     threeMesh.add(obj);
   }
+  for (let i = 0; i < labels.length; i++) {
+    // for (let i = 0; i < 10; i++) {
+    //add label
+    var labeldiv = document.createElement("div");
+    labeldiv.className = "label2d";
+    labeldiv.textContent = labels[i].label;
+    labeldiv.style.marginTop = "-1em";
+    var label2d = new THREE.CSS2DObject(labeldiv);
+    label2d.position.set(
+      labels[i].labelPosition.X,
+      labels[i].labelPosition.Z,
+      -labels[i].labelPosition.Y
+    );
+    threeMesh.add(label2d);
+  }
+
   scene.add(threeMesh);
+}
+function onShowData() {
+  let dataLabels = document.getElementById("labels2d");
+  let showData = document.getElementById("showData");
+  if (dataLabels.style.display == "none") {
+    dataLabels.style.display = "block";
+    showData.innerHTML = "Hide Data";
+  } else {
+    dataLabels.style.display = "none";
+    showData.innerHTML = "Show Data";
+  }
+}
+
+function onShowInfo() {
+  let description = document.querySelector(".model-description");
+  console.log(description);
+  let showInfo = document.getElementById("showInfo");
+  if (description.style.display == "none") {
+    description.style.display = "block";
+    showInfo.innerHTML = "Hide Info";
+  } else {
+    description.style.display = "none";
+    showInfo.innerHTML = "Show Info";
+  }
 }
 
 function removeObjectsFromScene() {
@@ -159,6 +213,7 @@ function removeObjectsFromScene() {
       scene.remove(child);
     }
   });
+  document.getElementById("labels2d").innerHTML = "";
 }
 
 async function getModelFromContentful(modelName) {
@@ -194,8 +249,7 @@ function init() {
       let modelHeader = document.querySelector(".model-header");
       modelHeader.innerText = model.Title;
       let modelDescription = document.querySelector(".model-description");
-      modelDescription.innerText = model.shortDescription;
-      console.log(model);
+      modelDescription.innerHTML = model.description;
 
       let params = model.params;
       let q = params.map((p) => {
@@ -218,8 +272,14 @@ function init() {
     })();
   } else {
     let canvas = document.querySelector("#canvas");
+    let showData = document.querySelector("#showData");
+    let showInfo = document.querySelector("#showInfo");
+    let modelDescription = document.querySelector(".model-description");
 
     canvas.classList.add("hidden");
+    showData.classList.add("hidden");
+    showInfo.classList.add("hidden");
+    modelDescription.classList.add("hidden");
 
     (async () => {
       let m = await getModelsFromContentful();

@@ -10,11 +10,19 @@
     <a id="logoWhite" href="https://whitearkitekter.com">
       <img alt="White" src="logo--white.svg"></a>
     <a id="dsearch" href="https://whitearkitekter.com/dsearch/">Dsearch</a>
-    <div id="overlay">
+    <!-- <div id="overlay"> -->
       <h1 class="model-header">All models</h1>
-      <p class="model-description"></p>
-    </div>
+      <div class="btn-section">
+
+        <button type="button" class="button" id="showData" onclick="onShowData()">Show Data</button>
+        <button type="button" class="button" id="showInfo" onclick="onShowInfo()">Hide Info</button>
+      </div>
+      <div class="model-description"></div>
+    <!-- </div> -->
     <div class="slider-section"></div>
+  
+
+    </div>
     <canvas id="canvas"></canvas>
     <script type="text/javascript" src="https://threejs.org/build/three.js"></script>
     <script type="text/javascript" src="https://threejs.org/examples/js/renderers/CSS2DRenderer.js"></script>

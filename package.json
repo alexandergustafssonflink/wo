@@ -1,5 +1,6 @@
 {
   "name": "whiteout",
+  "type": "module",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -9,8 +10,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@contentful/rich-text-html-renderer": "^14.1.2",
     "compute-rhino3d": "^0.13.0-beta",
-    "contentful": "^8.2.0",
+    "contentful": "^8.2.1",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "file-system": "^2.2.2",

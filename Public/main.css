@@ -7,16 +7,21 @@ body {
 
 #overlay {
   position: relative;
-  z-index: 1;
+  z-index: 2;
   width: 100%;
 }
 
+/* button {
+  margin-left: 300px;
+} */
+
+/* 
 #info {
   position: relative;
   overflow: auto;
   width: 30%;
   z-index: 1;
-}
+} */
 
 canvas {
   position: absolute;
@@ -26,19 +31,20 @@ canvas {
   height: 100vh;
   max-width: 100%;
   max-height: 100%;
+  z-index: 1;
   -webkit-appearance: none;
 }
 
-#infoModule {
+/* #infoModule {
   position: relative;
   padding-left: 30px;
-}
-#generalDescription {
+} */
+/* #generalDescription {
   overflow: auto;
   font-size: smaller;
   margin-top: 50px;
   height: calc(100vh - 400px);
-}
+} */
 
 h1 {
   color: #3d3d3d;
@@ -63,24 +69,27 @@ h1 {
   position: absolute;
   left: 30px;
   margin-top: 40px;
-
   color: #3d3d3d;
 }
 
-.button {
-  position: relative;
-  margin-top: 2px;
+.btn-section {
+  z-index: 400;
+  top: 70px;
+  left: 30px;
+  position: absolute;
   background-color: #8b8b8b;
-  border: none;
   color: #000000;
-
   text-align: center;
+}
+
+button {
   width: 100px;
   height: 30px;
-  opacity: 0.5;
+  /* opacity: 0.5;
+  border: none; */
 }
-.button:hover {
-  opacity: 1; /* Fully shown on mouse-over */
+button:hover {
+  opacity: 1;
 }
 
 /* .slider {
@@ -181,14 +190,26 @@ h3 {
   margin: 5px 0px 5px 0px;
 }
 
+.model-header {
+  z-index: 100;
+  position: relative;
+}
+
 .model-description {
   margin: 30px;
+  width: 30%;
+  height: 70vh;
+  overflow: scroll;
+  z-index: 100;
+  position: relative;
 }
 
 .slider-section {
   position: absolute;
   z-index: 100;
   margin-left: 30px;
+  right: 30px;
+  top: 30px;
 }
 
 .slider-div {
