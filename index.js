@@ -54,6 +54,7 @@ app.get("/contentful/:slug", async (req, res) => {
         slug: model.fields.slug,
         params: model.fields.params,
         model: model.fields.model.fields.file.url,
+        password: model.fields.password,
       });
     }, []);
 });

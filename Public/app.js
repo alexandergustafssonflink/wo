@@ -3,17 +3,12 @@ let rhOutGeometry = null;
 let rhOutMaterial = null;
 let rhOutText = null;
 let rhOutTextPt = null;
+let textureImage = "oak";
 
 // const materialsGhNames = ["WoodMissing", "Wood", "Transparent"];
 const materialsGhNames = ["WoodMissing"];
 
-const materials = [
-  new THREE.MeshStandardMaterial({
-    map: new THREE.TextureLoader().load("Textures/red-cardboard.jpg"),
-    side: THREE.DoubleSide,
-    metalness: 0.7,
-  }),
-];
+// materialImages = ["oak.jpg", "red-cardboard.jpg", "blk.jpg"];
 
 //const materialLines = new THREE.LineBasicMaterial( { color: 0x000000 } );
 const planeMaterial = new THREE.MeshStandardMaterial({
@@ -132,7 +127,15 @@ function maxObjSize(obj) {
   return maxSize;
 }
 
-function addObjectsToScene(data) {
+function addObjectsToScene(data, textureImage) {
+  const materials = [
+    new THREE.MeshStandardMaterial({
+      map: new THREE.TextureLoader().load(`Textures/${textureImage}.jpg`),
+      side: THREE.DoubleSide,
+      metalness: 0.7,
+    }),
+  ];
+
   //Add 3d objects to the scene
   let threeMesh = new THREE.Object3D();
   let volumes = data.volumes;
@@ -164,8 +167,6 @@ function addObjectsToScene(data) {
     threeMesh.add(obj);
   }
   for (let i = 0; i < labels.length; i++) {
-    // for (let i = 0; i < 10; i++) {
-    //add label
     var labeldiv = document.createElement("div");
     labeldiv.className = "label2d";
     labeldiv.textContent = labels[i].label;
@@ -178,7 +179,6 @@ function addObjectsToScene(data) {
     );
     threeMesh.add(label2d);
   }
-
   scene.add(threeMesh);
 }
 function onShowData() {
@@ -241,34 +241,36 @@ function init() {
   if (pathName !== "/") {
     modelInit();
     animate();
-    createSliders();
 
     (async () => {
       let model = await getModelFromContentful(modelName);
+      let inputPassword = window.prompt("Enter password");
 
-      let modelHeader = document.querySelector(".model-header");
-      modelHeader.innerText = model.Title;
-      let modelDescription = document.querySelector(".model-description");
-      modelDescription.innerHTML = model.description;
+      if (inputPassword == model.password) {
+        let modelHeader = document.querySelector(".model-header");
+        modelHeader.innerText = model.Title;
+        let modelDescription = document.querySelector(".model-description");
+        modelDescription.innerHTML = model.description;
+        // let defaultTexture = "oak";
+        // let textureImage = defaultTexture;
 
-      let params = model.params;
-      let q = params.map((p) => {
-        return `${p.name}=${p.defaultValue}`;
-      });
+        let params = model.params;
+        let q = params.map((p) => {
+          return `${p.name}=${p.defaultValue}`;
+        });
 
-      let query = q.join("&");
+        let query = q.join("&");
 
-      // let paramsArray = Object.keys(params).map((key) => [key, params[key]]);
-
-      // let w = paramsArray.map((a) => {
-      //   return `${a[0]}=${a[1]}`;
-      // });
-
-      rhinoCall(query).then((data) => {
-        console.log("Geometry recieved");
-        document.getElementById("loader").style.display = "none";
-        addObjectsToScene(data);
-      });
+        rhinoCall(query).then((data) => {
+          console.log("Geometry recieved");
+          document.getElementById("loader").style.display = "none";
+          addObjectsToScene(data, textureImage);
+        });
+        createSliders();
+      } else {
+        window.alert("The password you entered was incorrect");
+        window.location.reload();
+      }
     })();
   } else {
     let canvas = document.querySelector("#canvas");
@@ -321,7 +323,7 @@ function createSliders() {
       input.min = p.minValue;
       input.max = p.maxValue;
       input.onchange = function () {
-        onSliderChange();
+        onSettingsChange();
       };
       input.step = p.step;
       input.value = p.defaultValue;
@@ -333,7 +335,14 @@ function createSliders() {
   })();
 }
 
-function onSliderChange() {
+function onSettingsChange(element) {
+  if (element) {
+    textureImage = element.value;
+  } else {
+    let select = document.querySelector("select");
+    textureImage = select.value;
+  }
+
   document.getElementById("loader").style.display = "block";
   let sliders = document.querySelectorAll(".slider");
   let sliderParams = [];
@@ -352,12 +361,11 @@ function onSliderChange() {
   });
 
   let query = q.join("&");
-
   rhinoCall(query).then((data) => {
     console.log("Geometry recieved");
     document.getElementById("loader").style.display = "none";
     removeObjectsFromScene();
-    addObjectsToScene(data);
+    addObjectsToScene(data, textureImage);
   });
 }
 init();
