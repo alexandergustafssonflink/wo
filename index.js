@@ -52,8 +52,7 @@ app.get("/contentful/:slug", async (req, res) => {
         description: description,
         shortDescription: model.fields.shortDescription,
         slug: model.fields.slug,
-        params: model.fields.params,
-        model: model.fields.model.fields.file.url,
+        params: model.fields.params, // model: model.fields.model.fields.file.url,
         password: model.fields.password,
       });
     }, []);
@@ -94,8 +93,6 @@ app.get("/modelData/:modelName/", async (request, response) => {
 
     for (var propName in request.query) {
       if (request.query.hasOwnProperty(propName)) {
-        // console.log(propName);
-        // console.log(request.query[propName]);
         let par = new RhinoCompute.Grasshopper.DataTree("RH_IN:" + propName);
         let paramValue = request.query[propName];
         par.append([0], [paramValue]);
@@ -114,6 +111,7 @@ app.get("/modelData/:modelName/", async (request, response) => {
         for (let i = 0; i < result.values.length; i++) {
           if (
             result.values[i].ParamName === "RH_OUT:Mesh" ||
+            result.values[i].ParamName === "RH_OUT:MESH" ||
             result.values[i].ParamName === "RH_OUT:GEO"
           ) {
             rhOutGeometry = result.values[i].InnerTree["{ 0; }"];

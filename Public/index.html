@@ -17,15 +17,17 @@
         <button type="button" class="button" id="showData" onclick="onShowData()">Show Data</button>
         <button type="button" class="button" id="showInfo" onclick="onShowInfo()">Hide Info</button>
       </div>
-      <div class="model-description"></div>
+      <div class="model-description"> </div>
     <!-- </div> -->
-    <div class="slider-section"></div>
-    <select onchange="onSettingsChange(this)">
-      <option value="oak">Oak</option>
-      <option value="red-cardboard">Red cardboard</option>
-      <option value="blk">Black</option>
-
-    </select>
+    <div class="slider-section"> 
+      <h4>Choose texture</h4>
+      <select id="texture-select" onchange="onSettingsChange(this)">
+        <option value="oak">Oak</option>
+        <option value="red-cardboard">Red cardboard</option>
+        <option value="blk">Black</option>
+  
+      </select></div>
+   
   
 
     </div>
