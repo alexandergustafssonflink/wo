@@ -43,7 +43,7 @@ function modelInit() {
     45,
     window.innerWidth / window.innerHeight,
     1000,
-    200000
+    300000
   );
   camera.position.set(-10000, 1000, -50000);
 
@@ -266,7 +266,7 @@ function init() {
           document.getElementById("loader").style.display = "none";
           addObjectsToScene(data, textureImage);
         });
-        createSliders();
+        createComponents();
       } else {
         window.alert("The password you entered was incorrect");
         window.location.reload();
@@ -277,11 +277,13 @@ function init() {
     let showData = document.querySelector("#showData");
     let showInfo = document.querySelector("#showInfo");
     let modelDescription = document.querySelector(".model-description");
+    let sliderSection = document.querySelector(".slider-section");
 
     canvas.classList.add("hidden");
     showData.classList.add("hidden");
     showInfo.classList.add("hidden");
     modelDescription.classList.add("hidden");
+    sliderSection.classList.add("hidden");
 
     (async () => {
       let m = await getModelsFromContentful();
@@ -305,32 +307,50 @@ function init() {
   }
 }
 
-function createSliders() {
+function createComponents() {
   (async () => {
     let model = await getModelFromContentful(modelName);
     let params = model.params;
     let sliderSection = document.querySelector(".slider-section");
 
     params.forEach((p) => {
+      let componentDiv = document.createElement("div");
       let label = document.createElement("label");
-      let input = document.createElement("input");
-      let sliderDiv = document.createElement("div");
-      sliderDiv.classList.add("slider-div");
-      sliderSection.appendChild(sliderDiv);
-      input.type = p.type;
-      input.classList.add("slider");
-      input.name = p.name;
-      input.min = p.minValue;
-      input.max = p.maxValue;
+      label.setAttribute("for", p.name);
+      label.innerText = p.name;
+      componentDiv.appendChild(label);
+      componentDiv.classList.add("slider-div");
+      sliderSection.appendChild(componentDiv);
+      let input;
+      if (p.type == "range") {
+        input = document.createElement("input");
+        input.type = p.type;
+        input.classList.add("slider");
+
+        input.min = p.minValue;
+        input.max = p.maxValue;
+        input.onchange = function () {
+          onSettingsChange();
+        };
+        input.step = p.stepSize;
+        input.value = p.defaultValue;
+      } else if (p.type == "singleSelect") {
+        input = document.createElement("select");
+        input.classList.add("select-list");
+        for (var i = 0; i < p.options.length; i++) {
+          var option = document.createElement("option");
+          option.value = p.options[i].value;
+          option.text = p.options[i].name;
+
+          input.appendChild(option);
+        }
+      }
       input.onchange = function () {
         onSettingsChange();
       };
-      input.step = p.step;
-      input.value = p.defaultValue;
-      label.setAttribute("for", p.name);
-      label.innerText = p.name;
-      sliderDiv.appendChild(label);
-      sliderDiv.appendChild(input);
+      componentDiv.appendChild(input);
+      input.classList.add("component");
+      input.name = p.name;
     });
   })();
 }
@@ -339,12 +359,12 @@ function onSettingsChange(element) {
   if (element) {
     textureImage = element.value;
   } else {
-    let select = document.querySelector("select");
+    let select = document.querySelector("#texture-select");
     textureImage = select.value;
   }
 
   document.getElementById("loader").style.display = "block";
-  let sliders = document.querySelectorAll(".slider");
+  let sliders = document.querySelectorAll(".component");
   let sliderParams = [];
   sliders.forEach((s) => {
     let name = s.name;
@@ -354,6 +374,7 @@ function onSettingsChange(element) {
     obj[key] = name;
     obj["value"] = value;
     sliderParams.push(obj);
+    console.log(name + " " + value);
   });
 
   let q = sliderParams.map((p) => {
