@@ -1,8 +1,20 @@
+@font-face {
+  font-family: Aventir;
+  src: url("avenir_ff/AvenirLTStd-Roman.otf") format("opentype");
+}
+
+/* @font-face {
+  font-family: GraublauWeb;
+  font-weight: bold;
+  src: url("path/GraublauWebBold.otf") format("opentype");
+} */
+
 body {
   margin: 0px;
   padding: 0px;
   background-color: white;
-  font-family: Arial, Helvetica, sans-serif;
+  /* font-family: Arial, Helvetica, sans-serif; */
+  font-family: "Avenir";
 }
 
 #overlay {
@@ -148,10 +160,6 @@ button:hover {
   opacity: 1;
 }
 
-.hidden {
-  display: none;
-}
-
 a {
   text-decoration: none;
   color: black;
@@ -193,13 +201,31 @@ h3 {
   margin-bottom: 10px;
   font-size: 16px;
   display: flex;
+  justify-content: center;
   flex-direction: column;
+  align-items: center;
+  /* display: flex;
+  flex-direction: row;
+  justify-content: space-between; */
 }
 
-label {
+.slider-lower-div {
+  display: flex;
+  width: 100%;
+  align-items: center;
+
+}
+.slider-lower-div p {
+  margin: 0px;
+  font-size: 14px;
+  width: 35%;
+  text-align: left;
+}
+
+/* label {
   color: #3d3d3d;
   font-size: 14px;
-}
+} */
 
 .slider-section h4 {
   margin-bottom: 5px;
@@ -212,4 +238,142 @@ label {
   /* position: absolute;
   right: 30px;
   bottom: 50px; */
+}
+
+.drawer {
+  height: 100vh;
+  width: 500px;
+  position: absolute;
+  right: 0px;
+  top: 0px;
+  background-color: hotpink;
+  z-index: 1000;
+}
+
+.range-container {
+  position: relative;
+  margin-bottom: 40px;
+}
+
+input[type="range"] {
+  width: 300px;
+  margin: 18px 0;
+  -webkit-appearance: none;
+  background-color: inherit;
+}
+
+input[type="range"]:focus {
+  outline: none;
+}
+label {
+  background-color: #0d8fa2;
+  color: white;
+  /* top: -25px; */
+  /* left: 110px; */
+  position: absolute;
+  margin-left: 16%;
+  margin-bottom: 12%;
+  padding: 5px;
+  text-align: center;
+  border-radius: 4px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+
+input[type="range"] + label {
+  background-color: #0d8fa2;
+  color: white;
+  position: absolute;
+  /* top: -25px; */
+  /* left: 110px; */
+  width: inherit;
+  padding: 5px;
+  text-align: center;
+  border-radius: 4px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+
+/* Chrome & Safari */
+input[type="range"]::-webkit-slider-runnable-track {
+  background: #0d8fa2;
+  border-radius: 4px;
+  width: 100%;
+  height: 3px;
+  cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  height: 24px;
+  width: 24px;
+  background: #fff;
+  border-radius: 50%;
+  border: 4px solid #0d8fa2;
+  transition: 0.3s ease;
+  margin-top: -10px;
+  cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  background: #0d8fa2;
+}
+
+/* Firefox */
+input[type="range"]::-moz-range-track {
+  background: #0d8fa2;
+  border-radius: 4px;
+  width: 100%;
+  height: 14px;
+  cursor: pointer;
+}
+
+input[type="range"]::-moz-range-thumb {
+  -webkit-appearance: none;
+  height: 24px;
+  width: 24px;
+  background: #fff;
+  border-radius: 50%;
+  border: 1px solid #0d8fa2;
+  margin-top: -7px;
+  cursor: pointer;
+}
+
+input[type="range"]::-moz-range-thumb:hover {
+  background: #0d8fa2;
+}
+
+/* IE */
+input[type="range"]::-ms-track {
+  background: #0d8fa2;
+  border-radius: 4px;
+  width: 100%;
+  height: 14px;
+  cursor: pointer;
+}
+
+input[type="range"]::-ms-thumb {
+  -webkit-appearance: none;
+  height: 24px;
+  width: 24px;
+  background: #fff;
+  border-radius: 50%;
+  border: 1px solid #0d8fa2;
+  margin-top: -7px; let label = document.createElement("label");
+  label.setAttribute("for", p.name);
+  label.innerText = p.defaultValue;
+  componentDiv.appendChild(label);
+  cursor: pointer;
+}
+
+.hidden {
+  opacity: 0;
+  transition: 0.3s ease;
+}
+
+.removed {
+  display: none;
+}
+
+.show {
+  opacity: 1;
+  transition: 0.3s ease;
 }

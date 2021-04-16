@@ -108,22 +108,46 @@ app.get("/modelData/:modelName/", async (request, response) => {
         let rhOutText = null;
         let rhOutTextPt = null;
 
+        // for (let i = 0; i < result.values.length; i++) {
+        //   if (
+        //     result.values[i].ParamName === "RH_OUT:Mesh" ||
+        //     result.values[i].ParamName === "RH_OUT:MESH" ||
+        //     result.values[i].ParamName === "RH_OUT:GEO"
+        //   ) {
+        //     rhOutGeometry = result.values[i].InnerTree["{ 0; }"];
+        //   }
+        //   if (result.values[i].ParamName === "RH_OUT:Material") {
+        //     rhOutMaterial = result.values[i].InnerTree["{ 0; }"];
+        //   }
+        //   if (result.values[i].ParamName === "RH_OUT:Text") {
+        //     rhOutText = result.values[i].InnerTree["{ 0; }"];
+        //   }
+        //   if (result.values[i].ParamName === "RH_OUT:TextPt") {
+        //     rhOutTextPt = result.values[i].InnerTree["{ 0; }"];
+        //   }
+        // }
+
         for (let i = 0; i < result.values.length; i++) {
+          let outputParamValue = result.values[i].InnerTree["{0}"];
+          if (outputParamValue == null) {
+            outputParamValue = result.values[i].InnerTree["{ 0; }"];
+          }
+
           if (
             result.values[i].ParamName === "RH_OUT:Mesh" ||
             result.values[i].ParamName === "RH_OUT:MESH" ||
             result.values[i].ParamName === "RH_OUT:GEO"
           ) {
-            rhOutGeometry = result.values[i].InnerTree["{ 0; }"];
+            rhOutGeometry = outputParamValue;
           }
           if (result.values[i].ParamName === "RH_OUT:Material") {
-            rhOutMaterial = result.values[i].InnerTree["{ 0; }"];
+            rhOutMaterial = outputParamValue;
           }
           if (result.values[i].ParamName === "RH_OUT:Text") {
-            rhOutText = result.values[i].InnerTree["{ 0; }"];
+            rhOutText = outputParamValue;
           }
           if (result.values[i].ParamName === "RH_OUT:TextPt") {
-            rhOutTextPt = result.values[i].InnerTree["{ 0; }"];
+            rhOutTextPt = outputParamValue;
           }
         }
 

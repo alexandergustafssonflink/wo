@@ -39,13 +39,21 @@ function modelInit() {
 
   //Funkar för Humt
   // camera = new THREE.PerspectiveCamera(45, 2, 1, 50000);
+  // camera = new THREE.PerspectiveCamera(
+  //   45,
+  //   window.innerWidth / window.innerHeight,
+  //   1000,
+  //   300000
+  // );
   camera = new THREE.PerspectiveCamera(
     45,
     window.innerWidth / window.innerHeight,
     1000,
     300000
   );
+
   camera.position.set(-10000, 1000, -50000);
+  // camera.position.set(50000, 50000, -50000);
 
   // funkar för 200
   // camera = new THREE.PerspectiveCamera(45, 2, 1, 50000);
@@ -66,8 +74,6 @@ function modelInit() {
   spotLight.castShadow = true;
   camera.add(spotLight);
   scene.add(camera);
-
-  //scene.add( spotLight );
 
   spotLight.shadow.mapSize.width = 8192;
   spotLight.shadow.mapSize.height = 8192;
@@ -244,7 +250,8 @@ function init() {
 
     (async () => {
       let model = await getModelFromContentful(modelName);
-      let inputPassword = window.prompt("Enter password");
+      // let inputPassword = window.prompt("Enter password");
+      let inputPassword = "hello";
 
       if (inputPassword == model.password) {
         let modelHeader = document.querySelector(".model-header");
@@ -266,7 +273,8 @@ function init() {
           document.getElementById("loader").style.display = "none";
           addObjectsToScene(data, textureImage);
         });
-        createComponents();
+
+        await createComponents();
       } else {
         window.alert("The password you entered was incorrect");
         window.location.reload();
@@ -278,12 +286,14 @@ function init() {
     let showInfo = document.querySelector("#showInfo");
     let modelDescription = document.querySelector(".model-description");
     let sliderSection = document.querySelector(".slider-section");
+    let drawer = document.querySelector(".drawer");
 
-    canvas.classList.add("hidden");
-    showData.classList.add("hidden");
-    showInfo.classList.add("hidden");
-    modelDescription.classList.add("hidden");
-    sliderSection.classList.add("hidden");
+    canvas.classList.add("removed");
+    showData.classList.add("removed");
+    showInfo.classList.add("removed");
+    modelDescription.classList.add("removed");
+    sliderSection.classList.add("removed");
+    drawer.classList.add("removed");
 
     (async () => {
       let m = await getModelsFromContentful();
@@ -315,12 +325,15 @@ function createComponents() {
 
     params.forEach((p) => {
       let componentDiv = document.createElement("div");
-      let label = document.createElement("label");
-      label.setAttribute("for", p.name);
-      label.innerText = p.name;
-      componentDiv.appendChild(label);
+      let name = document.createElement("p");
+      let componentLowerDiv = document.createElement("div");
+
+      name.innerText = p.displayName;
+      componentLowerDiv.appendChild(name);
       componentDiv.classList.add("slider-div");
+      componentLowerDiv.classList.add("slider-lower-div");
       sliderSection.appendChild(componentDiv);
+
       let input;
       if (p.type == "range") {
         input = document.createElement("input");
@@ -332,8 +345,14 @@ function createComponents() {
         input.onchange = function () {
           onSettingsChange();
         };
+
         input.step = p.stepSize;
         input.value = p.defaultValue;
+
+        let label = document.createElement("label");
+        label.setAttribute("for", p.name);
+        label.innerText = p.defaultValue;
+        componentDiv.appendChild(label);
       } else if (p.type == "singleSelect") {
         input = document.createElement("select");
         input.classList.add("select-list");
@@ -348,20 +367,114 @@ function createComponents() {
       input.onchange = function () {
         onSettingsChange();
       };
-      componentDiv.appendChild(input);
+
+      componentLowerDiv.appendChild(input);
+      componentDiv.appendChild(componentLowerDiv);
       input.classList.add("component");
       input.name = p.name;
+
+      //////
+    });
+    let sliders = document.querySelectorAll(".slider");
+    console.log("ADDEED LOGIC");
+
+    // https://stackoverflow.com/questions/10756313/javascript-jquery-map-a-range-of-numbers-to-another-range-of-numbers
+    // const scale = (num, in_min, in_max, out_min, out_max) => {
+    //   return (
+    //     ((num - in_min) * (out_max - out_min)) / (in_max - in_min) + out_min
+    //   );
+    // };
+
+    let labels = document.querySelectorAll("label");
+    console.log(sliders);
+
+    sliders.forEach((s) => {
+      const value = +s.value;
+      const label = s.parentNode.previousSibling;
+      console.log(label);
+      label.classList.add("hidden");
+    });
+
+    sliders.forEach((s) => {
+      s.addEventListener("input", (e) => {
+        const value = +e.target.value;
+        const label = e.target.parentNode.previousSibling;
+        label.classList.remove("hidden");
+        label.classList.add("show");
+        label.innerHTML = value;
+      });
+      s.addEventListener("mouseup", (e) => {
+        const label = e.target.parentNode.previousSibling;
+        label.classList.remove("show");
+        label.classList.add("hidden");
+      });
     });
   })();
 }
 
+function addSliderLogic() {
+  let sliders = document.querySelectorAll(".slider");
+  // https://stackoverflow.com/questions/10756313/javascript-jquery-map-a-range-of-numbers-to-another-range-of-numbers
+  // const scale = (num, in_min, in_max, out_min, out_max) => {
+  //   return ((num - in_min) * (out_max - out_min)) / (in_max - in_min) + out_min;
+  // };
+
+  let labels = document.querySelectorAll("label");
+  console.log(sliders);
+
+  // sliders.forEach((s) => {
+  //   const value = +s.value;
+  //   const label = s.previousSibling;
+  //   console.log(label);
+  //   label.classList.add("hidden");
+  //   const rangeWidth = getComputedStyle(s).getPropertyValue("width");
+  //   console.log(rangeWidth);
+  //   const labelWidth = getComputedStyle(label).getPropertyValue("width");
+  //   const numWidth = +rangeWidth.substring(0, rangeWidth.length - 2);
+  //   const numLabelWidth = +labelWidth.substring(0, labelWidth.length - 2);
+  //   const max = +s.max;
+  //   const min = +s.min;
+  //   const left =
+  //     value * (numWidth / max) -
+  //     numLabelWidth / 2 +
+  //     scale(value, min, max, 10, -10);
+  //   label.style.left = `${left}px`;
+  // });
+
+  sliders.forEach((s) => {
+    // s.addEventListener("input", (e) => {
+    //   const value = +e.target.value;
+    //   const label = e.target.nextElementSibling;
+    //   label.classList.add("show");
+
+    //   const rangeWidth = getComputedStyle(e.target).getPropertyValue("width");
+    //   const labelWidth = getComputedStyle(label).getPropertyValue("width");
+    //   // remove px
+    //   const numWidth = +rangeWidth.substring(0, rangeWidth.length - 2);
+    //   const numLabelWidth = +labelWidth.substring(0, labelWidth.length - 2);
+    //   const max = +e.target.max;
+    //   const min = +e.target.min;
+    //   const left =
+    //     value * (numWidth / max) -
+    //     numLabelWidth / 2 +
+    //     scale(value, min, max, 10, -10);
+    //   label.style.left = `${left}px`;
+    //   label.innerHTML = value;
+    // });
+    s.addEventListener("mouseup", (e) => {
+      const label = e.target.nextElementSibling;
+      label.classList.remove("show");
+    });
+  });
+}
+
 function onSettingsChange(element) {
-  if (element) {
-    textureImage = element.value;
-  } else {
-    let select = document.querySelector("#texture-select");
-    textureImage = select.value;
-  }
+  // if (element) {
+  //   textureImage = element.value;
+  // } else {
+  //   // let select = document.querySelector("#texture-select");
+  //   // textureImage = select.value;
+  // }
 
   document.getElementById("loader").style.display = "block";
   let sliders = document.querySelectorAll(".component");
