@@ -4,6 +4,7 @@
     <title>200 year pavilion</title>
     <meta charset="utf-8" />
     <link rel=stylesheet href=main.css>
+   <script src="https://kit.fontawesome.com/adfeac4257.js" crossorigin="anonymous"></script>
   </head>
   <body>
     <div id="loader"></div> 
@@ -12,25 +13,24 @@
     <a id="dsearch" href="https://whitearkitekter.com/dsearch/">Dsearch</a>
     <!-- <div id="overlay"> -->
       <h1 class="model-header">All models</h1>
-      <div class="btn-section">
+      <!-- <div class="btn-section">
 
         <button type="button" class="button" id="showData" onclick="onShowData()">Show Data</button>
-        <button type="button" class="button" id="showInfo" onclick="onShowInfo()">Hide Info</button>
-      </div>
-      <div class="model-description"> </div>
+   
+      </div> -->
+     
     <!-- </div> -->
-  
+      <button class="drawer-btn"><i class="fas fa-angle-right"></i></button>
+      <button class="data-btn" id="showData" onclick="onShowData()"><i class="fas fa-ruler-vertical"></i></button>
+      
     <div class="drawer"> 
       <div class="slider-section"> 
-        <!-- <h4>Choose texture</h4>
-        <select id="texture-select" onchange="onSettingsChange(this)">
-          <option value="oak">Oak</option>
-          <option value="red-cardboard">Red cardboard</option>
-          <option value="blk">Black</option>
-    
-        </select> -->
-      </div>
   
+      </div>
+      <div class="model-info-section">
+        <h3 class="model-info-header"> <i class="fas fa-chevron-up"></i> INFO  </h3>
+      <div class="model-description"> </div>
+    </div>
 
     </div>
    

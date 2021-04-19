@@ -189,28 +189,30 @@ function addObjectsToScene(data, textureImage) {
 }
 function onShowData() {
   let dataLabels = document.getElementById("labels2d");
-  let showData = document.getElementById("showData");
+  let dataBtn = document.querySelector(".data-btn");
+  // let showData = document.getElementById("showData");
   if (dataLabels.style.display == "none") {
     dataLabels.style.display = "block";
-    showData.innerHTML = "Hide Data";
+    dataBtn.classList.add("data-btn-active");
+    // showData.innerHTML = "Hide Data";
   } else {
     dataLabels.style.display = "none";
-    showData.innerHTML = "Show Data";
+    dataBtn.classList.remove("data-btn-active");
+    // showData.innerHTML = "Show Data";
   }
 }
 
-function onShowInfo() {
-  let description = document.querySelector(".model-description");
-  console.log(description);
-  let showInfo = document.getElementById("showInfo");
-  if (description.style.display == "none") {
-    description.style.display = "block";
-    showInfo.innerHTML = "Hide Info";
-  } else {
-    description.style.display = "none";
-    showInfo.innerHTML = "Show Info";
-  }
-}
+// function onShowInfo() {
+//   let description = document.querySelector(".model-description");
+//   let showInfo = document.getElementById("showInfo");
+//   if (description.style.display == "none") {
+//     description.style.display = "block";
+//     // showInfo.innerHTML = "Hide Info";
+//   } else {
+//     description.style.display = "none";
+//     // showInfo.innerHTML = "Show Info";
+//   }
+// }
 
 function removeObjectsFromScene() {
   //throws error with multiple objects to remove, no idea why
@@ -287,10 +289,12 @@ function init() {
     let modelDescription = document.querySelector(".model-description");
     let sliderSection = document.querySelector(".slider-section");
     let drawer = document.querySelector(".drawer");
+    let drawerBtn = document.querySelector(".drawer-btn");
+    let dataBtn = document.querySelector(".data-btn");
 
     canvas.classList.add("removed");
-    showData.classList.add("removed");
-    showInfo.classList.add("removed");
+    drawerBtn.classList.add("removed");
+    dataBtn.classList.add("removed");
     modelDescription.classList.add("removed");
     sliderSection.classList.add("removed");
     drawer.classList.add("removed");
@@ -323,93 +327,160 @@ function createComponents() {
     let params = model.params;
     let sliderSection = document.querySelector(".slider-section");
 
-    params.forEach((p) => {
-      let componentDiv = document.createElement("div");
-      let name = document.createElement("p");
-      let componentLowerDiv = document.createElement("div");
+    let modules = model.params;
 
-      name.innerText = p.displayName;
-      componentLowerDiv.appendChild(name);
-      componentDiv.classList.add("slider-div");
-      componentLowerDiv.classList.add("slider-lower-div");
-      sliderSection.appendChild(componentDiv);
+    //
+    let modelInfoHeader = document.querySelector(".model-info-header");
+    modelInfoHeader.addEventListener("click", (e) => {
+      let header = e.target;
+      let arrow;
 
-      let input;
-      if (p.type == "range") {
-        input = document.createElement("input");
-        input.type = p.type;
-        input.classList.add("slider");
+      if (header.classList.value.includes("fas")) {
+        arrow = header;
+      } else {
+        arrow = header.children[0];
+      }
+      arrow.classList.toggle("spin");
+      let infoS = header.parentNode;
+      let modelDescription = document.querySelector(".model-description");
+      modelDescription.classList.toggle("menuhide");
+    });
 
-        input.min = p.minValue;
-        input.max = p.maxValue;
+    let drawerBtn = document.querySelector(".drawer-btn");
+    let drawer = document.querySelector(".drawer");
+    let dataBtn = document.querySelector(".data-btn");
+
+    drawerBtn.addEventListener("click", () => {
+      drawer.classList.toggle("drawer-hide");
+      drawerBtn.classList.toggle("drawer-btn-hide");
+      dataBtn.classList.toggle("drawer-btn-hide");
+    });
+
+    modules.forEach((m) => {
+      let moduleSection = document.createElement("div");
+      let moduleHeader = document.createElement("div");
+      let moduleh3 = document.createElement("h3");
+
+      let arrowIcon = document.createElement("i");
+      arrowIcon.classList.add("fas");
+      arrowIcon.classList.add("fa-chevron-up");
+
+      moduleHeader.classList.add("module-header");
+
+      moduleHeader.appendChild(arrowIcon);
+      moduleHeader.appendChild(moduleh3);
+
+      moduleh3.innerText = m.name;
+
+      moduleh3.addEventListener("click", (e) => {
+        toggleMenu(e);
+      });
+
+      arrowIcon.addEventListener("click", (e) => {
+        toggleMenu(e);
+      });
+
+      sliderSection.appendChild(moduleSection);
+      moduleSection.appendChild(moduleHeader);
+      moduleSection.classList.add("module-section");
+
+      let params = m.parts;
+
+      params.forEach((p) => {
+        let componentDiv = document.createElement("div");
+        let name = document.createElement("p");
+        let componentLowerDiv = document.createElement("div");
+
+        name.innerText = p.displayName;
+        componentLowerDiv.appendChild(name);
+        componentDiv.classList.add("slider-div");
+        componentLowerDiv.classList.add("slider-lower-div");
+        moduleSection.appendChild(componentDiv);
+
+        let input;
+        if (p.type == "range") {
+          input = document.createElement("input");
+          input.type = p.type;
+          input.classList.add("slider");
+
+          input.min = p.minValue;
+          input.max = p.maxValue;
+          input.onchange = function () {
+            onSettingsChange();
+          };
+
+          input.step = p.stepSize;
+          input.value = p.defaultValue;
+
+          let label = document.createElement("label");
+          label.setAttribute("for", p.name);
+          label.innerText = p.defaultValue;
+          componentDiv.appendChild(label);
+        } else if (p.type == "singleSelect") {
+          input = document.createElement("select");
+          input.classList.add("select-list");
+          for (var i = 0; i < p.options.length; i++) {
+            var option = document.createElement("option");
+            option.value = p.options[i].value;
+            option.text = p.options[i].name;
+
+            input.appendChild(option);
+          }
+        }
         input.onchange = function () {
           onSettingsChange();
         };
 
-        input.step = p.stepSize;
-        input.value = p.defaultValue;
-
-        let label = document.createElement("label");
-        label.setAttribute("for", p.name);
-        label.innerText = p.defaultValue;
-        componentDiv.appendChild(label);
-      } else if (p.type == "singleSelect") {
-        input = document.createElement("select");
-        input.classList.add("select-list");
-        for (var i = 0; i < p.options.length; i++) {
-          var option = document.createElement("option");
-          option.value = p.options[i].value;
-          option.text = p.options[i].name;
-
-          input.appendChild(option);
-        }
-      }
-      input.onchange = function () {
-        onSettingsChange();
-      };
-
-      componentLowerDiv.appendChild(input);
-      componentDiv.appendChild(componentLowerDiv);
-      input.classList.add("component");
-      input.name = p.name;
-
-      //////
-    });
-    let sliders = document.querySelectorAll(".slider");
-    console.log("ADDEED LOGIC");
-
-    // https://stackoverflow.com/questions/10756313/javascript-jquery-map-a-range-of-numbers-to-another-range-of-numbers
-    // const scale = (num, in_min, in_max, out_min, out_max) => {
-    //   return (
-    //     ((num - in_min) * (out_max - out_min)) / (in_max - in_min) + out_min
-    //   );
-    // };
-
-    let labels = document.querySelectorAll("label");
-    console.log(sliders);
-
-    sliders.forEach((s) => {
-      const value = +s.value;
-      const label = s.parentNode.previousSibling;
-      console.log(label);
-      label.classList.add("hidden");
-    });
-
-    sliders.forEach((s) => {
-      s.addEventListener("input", (e) => {
-        const value = +e.target.value;
-        const label = e.target.parentNode.previousSibling;
-        label.classList.remove("hidden");
-        label.classList.add("show");
-        label.innerHTML = value;
+        componentLowerDiv.appendChild(input);
+        componentDiv.appendChild(componentLowerDiv);
+        input.classList.add("component");
+        input.name = p.name;
       });
-      s.addEventListener("mouseup", (e) => {
-        const label = e.target.parentNode.previousSibling;
-        label.classList.remove("show");
+      let sliders = document.querySelectorAll(".slider");
+      console.log("ADDEED LOGIC");
+
+      let labels = document.querySelectorAll("label");
+
+      sliders.forEach((s) => {
+        const value = +s.value;
+        const label = s.parentNode.previousSibling;
         label.classList.add("hidden");
+      });
+
+      sliders.forEach((s) => {
+        s.addEventListener("input", (e) => {
+          const value = +e.target.value;
+          const label = e.target.parentNode.previousSibling;
+          label.classList.remove("hidden");
+          label.classList.add("show");
+          label.innerHTML = value;
+        });
+        s.addEventListener("mouseup", (e) => {
+          const label = e.target.parentNode.previousSibling;
+          label.classList.remove("show");
+          label.classList.add("hidden");
+        });
       });
     });
   })();
+}
+
+function toggleMenu(e) {
+  let header = e.target;
+  let arrow;
+  if (header.classList.value.includes("fas")) {
+    arrow = header;
+  } else {
+    arrow = header.previousSibling;
+  }
+
+  arrow.classList.toggle("spin");
+  let moduleS = header.parentNode.parentNode;
+  console.log(moduleS);
+  let sliders = moduleS.querySelectorAll(".slider-div");
+  sliders.forEach((s) => {
+    s.classList.toggle("menuhide");
+  });
 }
 
 function addSliderLogic() {
@@ -420,47 +491,8 @@ function addSliderLogic() {
   // };
 
   let labels = document.querySelectorAll("label");
-  console.log(sliders);
-
-  // sliders.forEach((s) => {
-  //   const value = +s.value;
-  //   const label = s.previousSibling;
-  //   console.log(label);
-  //   label.classList.add("hidden");
-  //   const rangeWidth = getComputedStyle(s).getPropertyValue("width");
-  //   console.log(rangeWidth);
-  //   const labelWidth = getComputedStyle(label).getPropertyValue("width");
-  //   const numWidth = +rangeWidth.substring(0, rangeWidth.length - 2);
-  //   const numLabelWidth = +labelWidth.substring(0, labelWidth.length - 2);
-  //   const max = +s.max;
-  //   const min = +s.min;
-  //   const left =
-  //     value * (numWidth / max) -
-  //     numLabelWidth / 2 +
-  //     scale(value, min, max, 10, -10);
-  //   label.style.left = `${left}px`;
-  // });
 
   sliders.forEach((s) => {
-    // s.addEventListener("input", (e) => {
-    //   const value = +e.target.value;
-    //   const label = e.target.nextElementSibling;
-    //   label.classList.add("show");
-
-    //   const rangeWidth = getComputedStyle(e.target).getPropertyValue("width");
-    //   const labelWidth = getComputedStyle(label).getPropertyValue("width");
-    //   // remove px
-    //   const numWidth = +rangeWidth.substring(0, rangeWidth.length - 2);
-    //   const numLabelWidth = +labelWidth.substring(0, labelWidth.length - 2);
-    //   const max = +e.target.max;
-    //   const min = +e.target.min;
-    //   const left =
-    //     value * (numWidth / max) -
-    //     numLabelWidth / 2 +
-    //     scale(value, min, max, 10, -10);
-    //   label.style.left = `${left}px`;
-    //   label.innerHTML = value;
-    // });
     s.addEventListener("mouseup", (e) => {
       const label = e.target.nextElementSibling;
       label.classList.remove("show");
@@ -469,13 +501,6 @@ function addSliderLogic() {
 }
 
 function onSettingsChange(element) {
-  // if (element) {
-  //   textureImage = element.value;
-  // } else {
-  //   // let select = document.querySelector("#texture-select");
-  //   // textureImage = select.value;
-  // }
-
   document.getElementById("loader").style.display = "block";
   let sliders = document.querySelectorAll(".component");
   let sliderParams = [];
@@ -487,7 +512,6 @@ function onSettingsChange(element) {
     obj[key] = name;
     obj["value"] = value;
     sliderParams.push(obj);
-    console.log(name + " " + value);
   });
 
   let q = sliderParams.map((p) => {
