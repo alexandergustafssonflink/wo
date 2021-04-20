@@ -136,7 +136,8 @@ function maxObjSize(obj) {
 function addObjectsToScene(data, textureImage) {
   const materials = [
     new THREE.MeshStandardMaterial({
-      map: new THREE.TextureLoader().load(`Textures/${textureImage}.jpg`),
+      // map: new THREE.TextureLoader().load(`Textures/${textureImage}.jpg`),
+      map: new THREE.TextureLoader().load(textureImage),
       side: THREE.DoubleSide,
       metalness: 0.7,
     }),
@@ -202,18 +203,6 @@ function onShowData() {
   }
 }
 
-// function onShowInfo() {
-//   let description = document.querySelector(".model-description");
-//   let showInfo = document.getElementById("showInfo");
-//   if (description.style.display == "none") {
-//     description.style.display = "block";
-//     // showInfo.innerHTML = "Hide Info";
-//   } else {
-//     description.style.display = "none";
-//     // showInfo.innerHTML = "Show Info";
-//   }
-// }
-
 function removeObjectsFromScene() {
   //throws error with multiple objects to remove, no idea why
   scene.traverse((child) => {
@@ -260,8 +249,7 @@ function init() {
         modelHeader.innerText = model.Title;
         let modelDescription = document.querySelector(".model-description");
         modelDescription.innerHTML = model.description;
-        // let defaultTexture = "oak";
-        // let textureImage = defaultTexture;
+        let textureImage = model.texture;
 
         let params = model.params;
         let q = params.map((p) => {
@@ -329,12 +317,17 @@ function createComponents() {
 
     let modules = model.params;
 
+    let logo = document.createElement("img");
+    logo.src = model.logo;
+    logo.classList.add("logo");
+
+    document.body.appendChild(logo);
+
     //
     let modelInfoHeader = document.querySelector(".model-info-header");
     modelInfoHeader.addEventListener("click", (e) => {
       let header = e.target;
       let arrow;
-
       if (header.classList.value.includes("fas")) {
         arrow = header;
       } else {
@@ -371,15 +364,12 @@ function createComponents() {
       moduleHeader.appendChild(moduleh3);
 
       moduleh3.innerText = m.name;
-
       moduleh3.addEventListener("click", (e) => {
         toggleMenu(e);
       });
-
       arrowIcon.addEventListener("click", (e) => {
         toggleMenu(e);
       });
-
       sliderSection.appendChild(moduleSection);
       moduleSection.appendChild(moduleHeader);
       moduleSection.classList.add("module-section");
@@ -476,7 +466,6 @@ function toggleMenu(e) {
 
   arrow.classList.toggle("spin");
   let moduleS = header.parentNode.parentNode;
-  console.log(moduleS);
   let sliders = moduleS.querySelectorAll(".slider-div");
   sliders.forEach((s) => {
     s.classList.toggle("menuhide");
@@ -519,12 +508,23 @@ function onSettingsChange(element) {
   });
 
   let query = q.join("&");
-  rhinoCall(query).then((data) => {
-    console.log("Geometry recieved");
+  (async () => {
+    let data = await rhinoCall(query);
     document.getElementById("loader").style.display = "none";
-    removeObjectsFromScene();
-    addObjectsToScene(data, textureImage);
-  });
+    await removeObjectsFromScene();
+    let model = await getModelFromContentful(modelName);
+    let textureImage = model.texture;
+    await addObjectsToScene(data, textureImage);
+  })();
+
+  // rhinoCall(query).then((data) => {
+  //   console.log("Geometry recieved");
+  //   document.getElementById("loader").style.display = "none";
+  //   removeObjectsFromScene();
+  //   let model = await getModelFromContentful(modelName);
+  //   let textureImage = model.texture;
+  //   addObjectsToScene(data, textureImage);
+  // });
 }
 init();
 
