@@ -480,3 +480,11 @@ input[type="range"]::-ms-thumb {
   transform: rotateX(180deg);
   transition: 0.3s ease;
 }
+
+.logo {
+  position: absolute;
+  width: 100px;
+  z-index: 100;
+  bottom: 50px;
+  right: 50px;
+}
