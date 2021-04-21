@@ -109,6 +109,7 @@ app.get("/modelData/:modelName/", async (request, response) => {
         let rhOutMaterial = null;
         let rhOutText = null;
         let rhOutTextPt = null;
+        let rhOutDashboard = null;
 
         // for (let i = 0; i < result.values.length; i++) {
         //   if (
@@ -151,6 +152,9 @@ app.get("/modelData/:modelName/", async (request, response) => {
           if (result.values[i].ParamName === "RH_OUT:TextPt") {
             rhOutTextPt = outputParamValue;
           }
+          if (result.values[i].ParamName === "RH_OUT:Dashboard") {
+            rhOutDashboard = outputParamValue;
+          }
         }
 
         let rhinoResult = [];
@@ -171,6 +175,10 @@ app.get("/modelData/:modelName/", async (request, response) => {
           }
 
           rhinoResult.push({ meshThree: meshThree, material: matName });
+        }
+
+        if (rhOutDashboard) {
+          console.log(rhOutDashboard);
         }
 
         //second half of tags does not return points

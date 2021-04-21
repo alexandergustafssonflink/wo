@@ -3,7 +3,6 @@ let rhOutGeometry = null;
 let rhOutMaterial = null;
 let rhOutText = null;
 let rhOutTextPt = null;
-let textureImage = "oak";
 
 // const materialsGhNames = ["WoodMissing", "Wood", "Transparent"];
 const materialsGhNames = ["WoodMissing"];
@@ -187,6 +186,8 @@ function addObjectsToScene(data, textureImage) {
     threeMesh.add(label2d);
   }
   scene.add(threeMesh);
+
+  // fitCameraToSelection(camera, controls, selection);
 }
 function onShowData() {
   let dataLabels = document.getElementById("labels2d");
@@ -251,12 +252,25 @@ function init() {
         modelDescription.innerHTML = model.description;
         let textureImage = model.texture;
 
-        let params = model.params;
-        let q = params.map((p) => {
-          return `${p.name}=${p.defaultValue}`;
+        // let params = model.params;
+        // let q = params.map((p) => {
+        //   return `${p.name}=${p.defaultValue}`;
+        // });
+
+        let m1 = model.params;
+
+        let newArr = [];
+
+        m1.forEach((m) => {
+          let parts = m.parts;
+          parts.forEach((p) => {
+            newArr.push(p.name + "=" + p.defaultValue);
+          });
         });
 
-        let query = q.join("&");
+        // params.forEach((p) => {});
+
+        let query = newArr.join("&");
 
         rhinoCall(query).then((data) => {
           console.log("Geometry recieved");
@@ -516,15 +530,6 @@ function onSettingsChange(element) {
     let textureImage = model.texture;
     await addObjectsToScene(data, textureImage);
   })();
-
-  // rhinoCall(query).then((data) => {
-  //   console.log("Geometry recieved");
-  //   document.getElementById("loader").style.display = "none";
-  //   removeObjectsFromScene();
-  //   let model = await getModelFromContentful(modelName);
-  //   let textureImage = model.texture;
-  //   addObjectsToScene(data, textureImage);
-  // });
 }
 init();
 
@@ -534,3 +539,35 @@ async function rhinoCall(query) {
   const json = await response.json();
   return json;
 }
+
+// function fitCameraToSelection(camera, controls, selection, fitOffset = 1.2) {
+//   const box = new THREE.Box3();
+
+//   for (const object of selection) box.expandByObject(object);
+
+//   const size = box.getSize(new THREE.Vector3());
+//   const center = box.getCenter(new THREE.Vector3());
+
+//   const maxSize = Math.max(size.x, size.y, size.z);
+//   const fitHeightDistance =
+//     maxSize / (2 * Math.atan((Math.PI * camera.fov) / 360));
+//   const fitWidthDistance = fitHeightDistance / camera.aspect;
+//   const distance = fitOffset * Math.max(fitHeightDistance, fitWidthDistance);
+
+//   const direction = controls.target
+//     .clone()
+//     .sub(camera.position)
+//     .normalize()
+//     .multiplyScalar(distance);
+
+//   controls.maxDistance = distance * 10;
+//   controls.target.copy(center);
+
+//   camera.near = distance / 100;
+//   camera.far = distance * 100;
+//   camera.updateProjectionMatrix();
+
+//   camera.position.copy(controls.target).sub(direction);
+
+//   controls.update();
+// }
