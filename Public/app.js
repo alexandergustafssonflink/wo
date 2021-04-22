@@ -132,6 +132,71 @@ function maxObjSize(obj) {
   return maxSize;
 }
 
+function createCharts(charts) {
+  let drawer = document.querySelector(".drawer");
+  let chartsSection = document.createElement("div");
+  let chartsHeader = document.createElement("div");
+  let chartsh3 = document.createElement("h3");
+
+  let arrowIcon = document.createElement("i");
+  arrowIcon.classList.add("fas");
+  arrowIcon.classList.add("fa-chevron-up");
+
+  chartsHeader.classList.add("charts-header");
+  chartsSection.appendChild(chartsHeader);
+
+  chartsHeader.appendChild(arrowIcon);
+  chartsHeader.appendChild(chartsh3);
+
+  chartsh3.innerText = "Charts";
+
+  chartsSection.classList.add("charts-section");
+  drawer.prepend(chartsSection);
+
+  console.log(typeof charts);
+
+  // let chartsArray = Array.from(charts);
+
+  // console.log(chartsArray.length());
+  let i = 0;
+
+  charts.forEach((chart) => {
+    let canvas = document.createElement("canvas");
+    canvas.classList.add(`chart-canvas`);
+    canvas.classList.add(`canvas-number${i}`);
+    chartsSection.appendChild(canvas);
+
+    const config = {
+      type: chart.type,
+      data: chart.data,
+      options: {
+        responsive: true,
+        // maintainAspectRatio: false,
+        plugins: {
+          title: {
+            display: true,
+            // text: "Example header",
+          },
+        },
+      },
+    };
+
+    let myChart = new Chart(
+      document.querySelector(`.canvas-number${i}`),
+      config
+    );
+    i++;
+  });
+
+  let chartCanvas = document.querySelectorAll(".chart-canvas");
+  chartsHeader.addEventListener("click", (e) => {
+    chartCanvas.forEach((chart) => {
+      chart.classList.toggle("menuhide");
+    });
+    arrowIcon.classList.toggle("spin");
+  });
+}
+
 function addObjectsToScene(data, textureImage) {
   const materials = [
     new THREE.MeshStandardMaterial({
@@ -146,6 +211,11 @@ function addObjectsToScene(data, textureImage) {
   let threeMesh = new THREE.Object3D();
   let volumes = data.volumes;
   let labels = data.labels;
+  let charts = data.charts;
+
+  if (charts) {
+    createCharts(charts);
+  }
 
   for (let i = 0; i < volumes.length; i++) {
     let mesh = volumes[i].meshThree;
@@ -252,11 +322,6 @@ function init() {
         modelDescription.innerHTML = model.description;
         let textureImage = model.texture;
 
-        // let params = model.params;
-        // let q = params.map((p) => {
-        //   return `${p.name}=${p.defaultValue}`;
-        // });
-
         let m1 = model.params;
 
         let newArr = [];
@@ -354,13 +419,19 @@ function createComponents() {
     });
 
     let drawerBtn = document.querySelector(".drawer-btn");
+
     let drawer = document.querySelector(".drawer");
     let dataBtn = document.querySelector(".data-btn");
+    let canvas = document.querySelector("#canvas");
+    drawer.classList.add("drawer-hide");
+    drawerBtn.classList.add("drawer-btn-hide");
+    dataBtn.classList.add("drawer-btn-hide");
 
     drawerBtn.addEventListener("click", () => {
       drawer.classList.toggle("drawer-hide");
       drawerBtn.classList.toggle("drawer-btn-hide");
       dataBtn.classList.toggle("drawer-btn-hide");
+      canvas.classList.toggle("small-canvas");
     });
 
     modules.forEach((m) => {
@@ -526,6 +597,14 @@ function onSettingsChange(element) {
     let data = await rhinoCall(query);
     document.getElementById("loader").style.display = "none";
     await removeObjectsFromScene();
+    let charts = document.querySelectorAll(".chart-canvas");
+
+    if (charts) {
+      charts.forEach((chart) => {
+        chart.remove();
+      });
+    }
+
     let model = await getModelFromContentful(modelName);
     let textureImage = model.texture;
     await addObjectsToScene(data, textureImage);
@@ -539,35 +618,3 @@ async function rhinoCall(query) {
   const json = await response.json();
   return json;
 }
-
-// function fitCameraToSelection(camera, controls, selection, fitOffset = 1.2) {
-//   const box = new THREE.Box3();
-
-//   for (const object of selection) box.expandByObject(object);
-
-//   const size = box.getSize(new THREE.Vector3());
-//   const center = box.getCenter(new THREE.Vector3());
-
-//   const maxSize = Math.max(size.x, size.y, size.z);
-//   const fitHeightDistance =
-//     maxSize / (2 * Math.atan((Math.PI * camera.fov) / 360));
-//   const fitWidthDistance = fitHeightDistance / camera.aspect;
-//   const distance = fitOffset * Math.max(fitHeightDistance, fitWidthDistance);
-
-//   const direction = controls.target
-//     .clone()
-//     .sub(camera.position)
-//     .normalize()
-//     .multiplyScalar(distance);
-
-//   controls.maxDistance = distance * 10;
-//   controls.target.copy(center);
-
-//   camera.near = distance / 100;
-//   camera.far = distance * 100;
-//   camera.updateProjectionMatrix();
-
-//   camera.position.copy(controls.target).sub(direction);
-
-//   controls.update();
-// }
