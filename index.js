@@ -177,8 +177,23 @@ app.get("/modelData/:modelName/", async (request, response) => {
           rhinoResult.push({ meshThree: meshThree, material: matName });
         }
 
+        let chartObject;
+
         if (rhOutDashboard) {
-          console.log(rhOutDashboard);
+          let a = rhOutDashboard.map((r) => {
+            let data = r.data;
+            let c = JSON.parse(data);
+            let d = c.split("'");
+            let e = d.join('"');
+            let f = JSON.parse(e);
+
+            return f;
+          });
+
+          let b = a.filter((o) => {
+            return o.type == "doughnut" || o.type == "line";
+          });
+          chartObject = b;
         }
 
         //second half of tags does not return points
@@ -194,7 +209,11 @@ app.get("/modelData/:modelName/", async (request, response) => {
           }
         }
 
-        let json = { volumes: rhinoResult, labels: rhinoLabels };
+        let json = {
+          volumes: rhinoResult,
+          labels: rhinoLabels,
+          charts: chartObject,
+        };
         response.json(json);
       }
     );

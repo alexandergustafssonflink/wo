@@ -17,7 +17,7 @@ body {
   width: 100%;
 }
 
-canvas {
+#canvas {
   position: absolute;
   top: 0px;
   left: 0px;
@@ -27,6 +27,7 @@ canvas {
   max-height: 100%;
   z-index: 1;
   -webkit-appearance: none;
+  transition: 0.3s ease;
 }
 
 /* #infoModule {
@@ -468,7 +469,7 @@ input[type="range"]::-ms-thumb {
 }
 
 .menuhide {
-  display: none;
+  display: none !important;
   transform: translateY(-50px);
   transition: 0.5s ease;
 }
@@ -490,4 +491,32 @@ input[type="range"]::-ms-thumb {
   z-index: 100;
   bottom: 50px;
   right: 50px;
+}
+
+.charts-section {
+  margin: 30px;
+}
+
+.charts-header {
+  display: flex;
+  align-items: center;
+}
+
+.charts-header .fas {
+  color: #0d8fa2;
+  padding: 5px 10px 5px 0px;
+  font-size: 14px;
+  color: #0d8fa2;
+  transition: 0.3s ease;
+  cursor: pointer;
+}
+
+.chart-canvas {
+  /* width: 50% !important;
+  height: auto !important; */
+}
+
+.small-canvas {
+  width: calc(100vw - 500px) !important;
+  transition: 0.3s ease;
 }
