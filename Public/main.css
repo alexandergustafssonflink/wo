@@ -265,7 +265,7 @@ h3 {
   transition: 0.5s ease;
 }
 
-.drawer-btn {
+.drawer-info-btn {
   position: absolute;
   right: 500px;
   top: 0px;
@@ -276,8 +276,8 @@ h3 {
   width: 40px;
   cursor: pointer;
   height: 40px;
-  background-color: #0d8fa2;
-  color: white;
+  background-color: white;
+  color: #0d8fa2;
   transition: 0.5s ease;
 }
 .drawer-btn-hide {
@@ -287,11 +287,15 @@ h3 {
   background-color: white;
 }
 
+.active {
+  color: white !important;
+  background-color: #0d8fa2 !important;
+}
+
 .drawer-btn .fas {
   font-size: 24px;
 }
-
-.data-btn {
+.drawer-settings-btn {
   position: absolute;
   right: 500px;
   top: 50px;

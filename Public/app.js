@@ -418,20 +418,53 @@ function createComponents() {
       modelDescription.classList.toggle("menuhide");
     });
 
-    let drawerBtn = document.querySelector(".drawer-btn");
+    let drawerInfoBtn = document.querySelector(".drawer-info-btn");
+    let drawerSettingsBtn = document.querySelector(".drawer-settings-btn");
+
+    let drawerBtns = document.querySelectorAll(".drawer-btn");
 
     let drawer = document.querySelector(".drawer");
-    let dataBtn = document.querySelector(".data-btn");
-    let canvas = document.querySelector("#canvas");
-    drawer.classList.add("drawer-hide");
-    drawerBtn.classList.add("drawer-btn-hide");
-    dataBtn.classList.add("drawer-btn-hide");
 
-    drawerBtn.addEventListener("click", () => {
-      drawer.classList.toggle("drawer-hide");
-      drawerBtn.classList.toggle("drawer-btn-hide");
-      dataBtn.classList.toggle("drawer-btn-hide");
-      canvas.classList.toggle("small-canvas");
+    let infoPage = document.querySelector(".info-page");
+    let settingsPage = document.querySelector(".settings-page");
+
+    drawerBtns.forEach((drawerBtn) => {
+      drawerBtn.addEventListener("click", (e) => {
+        let btn;
+        if (e.target.type !== "submit") {
+          btn = e.target.parentNode;
+        } else {
+          btn = e.target;
+        }
+        if (btn.classList.contains("drawer-info-btn")) {
+          settingsPage.classList.add("removed");
+          infoPage.classList.remove("removed");
+        } else {
+          infoPage.classList.add("removed");
+          settingsPage.classList.remove("removed");
+        }
+        if (drawer.classList.contains("drawer-hide")) {
+          drawer.classList.remove("drawer-hide");
+          drawerInfoBtn.classList.remove("drawer-btn-hide");
+          drawerSettingsBtn.classList.remove("drawer-btn-hide");
+          btn.classList.add("active");
+        } else {
+          if (btn.classList.contains("active")) {
+            drawer.classList.add("drawer-hide");
+            drawerInfoBtn.classList.add("drawer-btn-hide");
+            drawerSettingsBtn.classList.add("drawer-btn-hide");
+            drawerBtns.forEach((b) => {
+              b.classList.remove("active");
+            });
+          }
+          drawerBtns.forEach((b) => {
+            b.classList.remove("active");
+          });
+          if (!drawer.classList.contains("drawer-hide")) {
+            btn.classList.add("active");
+          }
+        }
+      });
     });
 
     modules.forEach((m) => {
