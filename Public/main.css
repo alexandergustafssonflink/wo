@@ -41,7 +41,7 @@ body {
   height: calc(100vh - 400px);
 } */
 
-h1 {
+.model-header {
   color: #3d3d3d;
   padding-left: 30px;
 }
@@ -515,12 +515,34 @@ input[type="range"]::-ms-thumb {
   cursor: pointer;
 }
 
-.chart-canvas {
+/* .chart-canvas {
   /* width: 50% !important;
   height: auto !important; */
-}
 
 .small-canvas {
   width: calc(100vw - 500px) !important;
   transition: 0.3s ease;
+}
+
+.img-container {
+  margin: 30px;
+}
+.dashboard-image {
+  width: 100%;
+}
+
+.markdown-data {
+  margin: 0px 30px 0px 30px;
+}
+
+.markdown-data p {
+  font-size: 14px;
+}
+
+.markdown-data h1 {
+  font-size: 18px;
+}
+
+.markdown-data h2 {
+  font-size: 16px;
 }
