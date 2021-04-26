@@ -358,6 +358,10 @@ function init() {
         modelDescription.innerHTML = model.description;
         let textureImage = model.texture;
 
+        if (model.images) {
+          createGallery(model.images);
+        }
+
         let m1 = model.params;
 
         let newArr = [];
@@ -422,6 +426,27 @@ function init() {
       document.getElementById("loader").style.display = "none";
     })();
   }
+}
+
+function createGallery(modelImages) {
+  let infoPage = document.querySelector(".info-page");
+  let i = 0;
+  modelImages.forEach((image) => {
+    let a = document.createElement("a");
+    a.setAttribute("data-lightbox", `image-${i}`);
+    a.href = image.fields.file.url;
+    let imgDiv = document.createElement("div");
+    imgDiv.classList.add("img-container");
+    let img = document.createElement("img");
+    img.src = image.fields.file.url;
+    img.classList.add("gallery-image");
+
+    infoPage.appendChild(a);
+    a.appendChild(imgDiv);
+    imgDiv.appendChild(img);
+
+    i++;
+  });
 }
 
 function createComponents() {
