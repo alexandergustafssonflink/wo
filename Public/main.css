@@ -546,3 +546,7 @@ input[type="range"]::-ms-thumb {
 .markdown-data h2 {
   font-size: 16px;
 }
+
+.gallery-image {
+  width: 100%;
+}

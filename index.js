@@ -190,9 +190,6 @@ app.get("/modelData/:modelName/", async (request, response) => {
             return f;
           });
 
-          // let b = a.filter((o) => {
-          //   return o.type == "doughnut" || o.type == "line";
-          // });
           dataDashboard = a;
         }
 
