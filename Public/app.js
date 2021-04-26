@@ -132,69 +132,92 @@ function maxObjSize(obj) {
   return maxSize;
 }
 
-function createCharts(charts) {
+function createDashboard(data, i) {
+  let settingsPage = document.querySelector(".settings-page");
+  let id = 0;
+  console.log(data);
+  data.forEach((d) => {
+    if (d.type == "image") {
+      let images = d.data.datasets;
+      images.forEach((i) => {
+        let imgDiv = document.createElement("div");
+        let img = document.createElement("img");
+        imgDiv.classList.add("img-container");
+        settingsPage.appendChild(imgDiv);
+        imgDiv.appendChild(img);
+        img.src = `/images/${d.data.datasets[0].link}`;
+        img.classList.add("dashboard-image");
+      });
+    } else if (d.type == "doughnut" || d.type == "line" || d.type == "bar") {
+      createChart(d, id);
+      id++;
+    } else if (d.type == "markdown") {
+      var converter = new showdown.Converter();
+      let htmlText = converter.makeHtml(d.data.datasets[0].string);
+      let markdownDataDiv = document.createElement("div");
+      settingsPage.appendChild(markdownDataDiv);
+      markdownDataDiv.classList.add("markdown-data");
+      markdownDataDiv.innerHTML = htmlText;
+    }
+  });
+}
+
+function createChart(chart, i) {
   let drawer = document.querySelector(".drawer");
-  let chartsSection = document.createElement("div");
-  let chartsHeader = document.createElement("div");
-  let chartsh3 = document.createElement("h3");
+  let chartsDiv = document.querySelector(".charts-section");
 
-  let arrowIcon = document.createElement("i");
-  arrowIcon.classList.add("fas");
-  arrowIcon.classList.add("fa-chevron-up");
+  let chartsSection;
+  let chartsHeader;
 
-  chartsHeader.classList.add("charts-header");
-  chartsSection.appendChild(chartsHeader);
-
-  chartsHeader.appendChild(arrowIcon);
-  chartsHeader.appendChild(chartsh3);
-
-  chartsh3.innerText = "Charts";
-
-  chartsSection.classList.add("charts-section");
-  drawer.prepend(chartsSection);
-
-  console.log(typeof charts);
+  if (chartsDiv == null) {
+    chartsSection = document.createElement("div");
+    chartsHeader = document.createElement("div");
+    let chartsh3 = document.createElement("h3");
+    let settingsPage = document.querySelector(".settings-page");
+    let arrowIcon = document.createElement("i");
+    chartsHeader.classList.add("charts-header");
+    arrowIcon.classList.add("fas");
+    arrowIcon.classList.add("fa-chevron-up");
+    chartsSection.classList.add("charts-section");
+    chartsHeader.appendChild(arrowIcon);
+    chartsh3.innerText = "Charts";
+    chartsHeader.appendChild(chartsh3);
+    chartsSection.appendChild(chartsHeader);
+    settingsPage.prepend(chartsSection);
+  } else {
+    chartsSection = chartsDiv;
+    chartsHeader = document.querySelector(".charts-header");
+  }
 
   // let chartsArray = Array.from(charts);
 
   // console.log(chartsArray.length());
-  let i = 0;
 
-  charts.forEach((chart) => {
-    let canvas = document.createElement("canvas");
-    canvas.classList.add(`chart-canvas`);
-    canvas.classList.add(`canvas-number${i}`);
-    chartsSection.appendChild(canvas);
+  // charts.forEach((chart) => {
+  let canvas = document.createElement("canvas");
+  canvas.classList.add(`chart-canvas`);
+  canvas.classList.add(`canvas-number${i}`);
+  console.log(chartsSection);
+  chartsSection.appendChild(canvas);
 
-    const config = {
-      type: chart.type,
-      data: chart.data,
-      options: {
-        responsive: true,
-        // maintainAspectRatio: false,
-        plugins: {
-          title: {
-            display: true,
-            // text: "Example header",
-          },
+  const config = {
+    type: chart.type,
+    data: chart.data,
+    options: {
+      responsive: true,
+      // maintainAspectRatio: false,
+      plugins: {
+        title: {
+          display: true,
+          // text: "Example header",
         },
       },
-    };
+    },
+  };
 
-    let myChart = new Chart(
-      document.querySelector(`.canvas-number${i}`),
-      config
-    );
-    i++;
-  });
-
-  let chartCanvas = document.querySelectorAll(".chart-canvas");
-  chartsHeader.addEventListener("click", (e) => {
-    chartCanvas.forEach((chart) => {
-      chart.classList.toggle("menuhide");
-    });
-    arrowIcon.classList.toggle("spin");
-  });
+  let myChart = new Chart(document.querySelector(`.canvas-number${i}`), config);
+  i++;
+  // });
 }
 
 function addObjectsToScene(data, textureImage) {
@@ -211,10 +234,23 @@ function addObjectsToScene(data, textureImage) {
   let threeMesh = new THREE.Object3D();
   let volumes = data.volumes;
   let labels = data.labels;
-  let charts = data.charts;
+  let dashboardData = data.dashBoard;
 
-  if (charts) {
-    createCharts(charts);
+  if (dashboardData) {
+    createDashboard(dashboardData);
+  }
+
+  let chartCanvas = document.querySelectorAll(".chart-canvas");
+  let chartsHeader = document.querySelector(".charts-header");
+  let chartSectionArrow = document.querySelector(".charts-header .fas");
+
+  if (chartsHeader) {
+    chartsHeader.addEventListener("click", (e) => {
+      chartCanvas.forEach((chart) => {
+        chart.classList.toggle("menuhide");
+      });
+      chartSectionArrow.classList.toggle("spin");
+    });
   }
 
   for (let i = 0; i < volumes.length; i++) {
@@ -357,11 +393,11 @@ function init() {
     let sliderSection = document.querySelector(".slider-section");
     let drawer = document.querySelector(".drawer");
     let drawerBtn = document.querySelector(".drawer-btn");
-    let dataBtn = document.querySelector(".data-btn");
+    let drawerSettingsBtn = document.querySelector(".drawer-settings-btn");
 
     canvas.classList.add("removed");
     drawerBtn.classList.add("removed");
-    dataBtn.classList.add("removed");
+    drawerSettingsBtn.classList.add("removed");
     modelDescription.classList.add("removed");
     sliderSection.classList.add("removed");
     drawer.classList.add("removed");
@@ -418,20 +454,53 @@ function createComponents() {
       modelDescription.classList.toggle("menuhide");
     });
 
-    let drawerBtn = document.querySelector(".drawer-btn");
+    let drawerInfoBtn = document.querySelector(".drawer-info-btn");
+    let drawerSettingsBtn = document.querySelector(".drawer-settings-btn");
+
+    let drawerBtns = document.querySelectorAll(".drawer-btn");
 
     let drawer = document.querySelector(".drawer");
-    let dataBtn = document.querySelector(".data-btn");
-    let canvas = document.querySelector("#canvas");
-    drawer.classList.add("drawer-hide");
-    drawerBtn.classList.add("drawer-btn-hide");
-    dataBtn.classList.add("drawer-btn-hide");
 
-    drawerBtn.addEventListener("click", () => {
-      drawer.classList.toggle("drawer-hide");
-      drawerBtn.classList.toggle("drawer-btn-hide");
-      dataBtn.classList.toggle("drawer-btn-hide");
-      canvas.classList.toggle("small-canvas");
+    let infoPage = document.querySelector(".info-page");
+    let settingsPage = document.querySelector(".settings-page");
+
+    drawerBtns.forEach((drawerBtn) => {
+      drawerBtn.addEventListener("click", (e) => {
+        let btn;
+        if (e.target.type !== "submit") {
+          btn = e.target.parentNode;
+        } else {
+          btn = e.target;
+        }
+        if (btn.classList.contains("drawer-info-btn")) {
+          settingsPage.classList.add("removed");
+          infoPage.classList.remove("removed");
+        } else {
+          infoPage.classList.add("removed");
+          settingsPage.classList.remove("removed");
+        }
+        if (drawer.classList.contains("drawer-hide")) {
+          drawer.classList.remove("drawer-hide");
+          drawerInfoBtn.classList.remove("drawer-btn-hide");
+          drawerSettingsBtn.classList.remove("drawer-btn-hide");
+          btn.classList.add("active");
+        } else {
+          if (btn.classList.contains("active")) {
+            drawer.classList.add("drawer-hide");
+            drawerInfoBtn.classList.add("drawer-btn-hide");
+            drawerSettingsBtn.classList.add("drawer-btn-hide");
+            drawerBtns.forEach((b) => {
+              b.classList.remove("active");
+            });
+          }
+          drawerBtns.forEach((b) => {
+            b.classList.remove("active");
+          });
+          if (!drawer.classList.contains("drawer-hide")) {
+            btn.classList.add("active");
+          }
+        }
+      });
     });
 
     modules.forEach((m) => {

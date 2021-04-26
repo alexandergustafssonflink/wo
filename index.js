@@ -46,7 +46,6 @@ app.get("/contentful/:slug", async (req, res) => {
     .then((entries) => {
       let model = entries.items[0];
       let description = richTextToHtmlString(model.fields.description);
-
       res.json({
         Title: model.fields.title,
         description: description,
@@ -56,6 +55,7 @@ app.get("/contentful/:slug", async (req, res) => {
         password: model.fields.password,
         texture: model.fields.texture.fields.file.url,
         logo: model.fields.logo.fields.file.url,
+        images: model.fields.modelImages,
       });
     }, []);
 });
@@ -177,7 +177,7 @@ app.get("/modelData/:modelName/", async (request, response) => {
           rhinoResult.push({ meshThree: meshThree, material: matName });
         }
 
-        let chartObject;
+        let dataDashboard;
 
         if (rhOutDashboard) {
           let a = rhOutDashboard.map((r) => {
@@ -190,10 +190,10 @@ app.get("/modelData/:modelName/", async (request, response) => {
             return f;
           });
 
-          let b = a.filter((o) => {
-            return o.type == "doughnut" || o.type == "line";
-          });
-          chartObject = b;
+          // let b = a.filter((o) => {
+          //   return o.type == "doughnut" || o.type == "line";
+          // });
+          dataDashboard = a;
         }
 
         //second half of tags does not return points
@@ -212,7 +212,7 @@ app.get("/modelData/:modelName/", async (request, response) => {
         let json = {
           volumes: rhinoResult,
           labels: rhinoLabels,
-          charts: chartObject,
+          dashBoard: dataDashboard,
         };
         response.json(json);
       }
