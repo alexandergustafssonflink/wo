@@ -4,6 +4,9 @@ let rhOutMaterial = null;
 let rhOutText = null;
 let rhOutTextPt = null;
 
+let pathName = window.location.pathname;
+let modelName = pathName.replace("/", "");
+
 // const materialsGhNames = ["WoodMissing", "Wood", "Transparent"];
 const materialsGhNames = ["WoodMissing"];
 
@@ -51,7 +54,22 @@ function modelInit() {
     300000
   );
 
-  camera.position.set(-10000, 1000, -50000);
+  // X Y Distance
+  // camera.position.set(-10000, 10000, -25000);
+  // KORREKT
+  // camera.position.set(-10000, 1000, -50000);
+
+  (async () => {
+    let model = await getModelFromContentful(modelName);
+    let cameraPosition = model.cameraPosition;
+
+    if (cameraPosition) {
+      camera.position.set(cameraPosition.x, cameraPosition.y, cameraPosition.z);
+    } else {
+      camera.position.set(-10000, 1000, -50000);
+    }
+  })();
+
   // camera.position.set(50000, 50000, -50000);
 
   // funkar för 200
@@ -135,20 +153,36 @@ function maxObjSize(obj) {
 function createDashboard(data, i) {
   let settingsPage = document.querySelector(".settings-page");
   let id = 0;
-  console.log(data);
+
+  let chartTypes = [
+    "doughnut",
+    "line",
+    "bar",
+    "radar",
+    "area",
+    "bubble",
+    "polarArea",
+    "scatter",
+  ];
   data.forEach((d) => {
     if (d.type == "image") {
       let images = d.data.datasets;
+      let imgIndex = 0;
       images.forEach((i) => {
         let imgDiv = document.createElement("div");
         let img = document.createElement("img");
+        let a = document.createElement("a");
+        a.setAttribute("data-lightbox", `image-${imgIndex}`);
+        a.href = `/images/${d.data.datasets[0].link}`;
         imgDiv.classList.add("img-container");
-        settingsPage.appendChild(imgDiv);
+        a.appendChild(imgDiv);
+        settingsPage.appendChild(a);
         imgDiv.appendChild(img);
         img.src = `/images/${d.data.datasets[0].link}`;
         img.classList.add("dashboard-image");
+        imgIndex++;
       });
-    } else if (d.type == "doughnut" || d.type == "line" || d.type == "bar") {
+    } else if (chartTypes.includes(d.type)) {
       createChart(d, id);
       id++;
     } else if (d.type == "markdown") {
@@ -183,21 +217,15 @@ function createChart(chart, i) {
     chartsh3.innerText = "Charts";
     chartsHeader.appendChild(chartsh3);
     chartsSection.appendChild(chartsHeader);
-    settingsPage.prepend(chartsSection);
+    settingsPage.appendChild(chartsSection);
   } else {
     chartsSection = chartsDiv;
     chartsHeader = document.querySelector(".charts-header");
   }
 
-  // let chartsArray = Array.from(charts);
-
-  // console.log(chartsArray.length());
-
-  // charts.forEach((chart) => {
   let canvas = document.createElement("canvas");
   canvas.classList.add(`chart-canvas`);
   canvas.classList.add(`canvas-number${i}`);
-  console.log(chartsSection);
   chartsSection.appendChild(canvas);
 
   const config = {
@@ -217,7 +245,6 @@ function createChart(chart, i) {
 
   let myChart = new Chart(document.querySelector(`.canvas-number${i}`), config);
   i++;
-  // });
 }
 
 function addObjectsToScene(data, textureImage) {
@@ -338,9 +365,6 @@ async function getModelsFromContentful() {
   return json;
 }
 
-let pathName = window.location.pathname;
-let modelName = pathName.replace("/", "");
-
 function init() {
   if (pathName !== "/") {
     modelInit();
@@ -381,8 +405,11 @@ function init() {
           console.log("Geometry recieved");
           document.getElementById("loader").style.display = "none";
           addObjectsToScene(data, textureImage);
+          let drawerBtns = document.querySelectorAll(".drawer-btn");
+          drawerBtns.forEach((btn) => {
+            btn.classList.remove("removed");
+          });
         });
-
         await createComponents();
       } else {
         window.alert("The password you entered was incorrect");
@@ -398,6 +425,10 @@ function init() {
     let drawer = document.querySelector(".drawer");
     let drawerBtn = document.querySelector(".drawer-btn");
     let drawerSettingsBtn = document.querySelector(".drawer-settings-btn");
+    document.body.style.backgroundImage = "url('Textures/Background.jpg')";
+    document.body.style.backgroundSize = "cover";
+    document.body.style.height = "100vh";
+    document.querySelector(".model-header").style.margin = "50px 0px 0px 100px";
 
     canvas.classList.add("removed");
     drawerBtn.classList.add("removed");
