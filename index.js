@@ -56,6 +56,7 @@ app.get("/contentful/:slug", async (req, res) => {
         texture: model.fields.texture.fields.file.url,
         logo: model.fields.logo.fields.file.url,
         images: model.fields.modelImages,
+        cameraPosition: model.fields.cameraPosition,
       });
     }, []);
 });
