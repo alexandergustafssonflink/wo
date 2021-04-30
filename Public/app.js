@@ -168,6 +168,8 @@ function createDashboard(data, i) {
     if (d.type == "image") {
       let images = d.data.datasets;
       let imgIndex = 0;
+      let dashboardImg = document.querySelector(".dashboard-image");
+
       images.forEach((i) => {
         let imgDiv = document.createElement("div");
         let img = document.createElement("img");
@@ -186,6 +188,7 @@ function createDashboard(data, i) {
       createChart(d, id);
       id++;
     } else if (d.type == "markdown") {
+      let markdownData = document.querySelector(".markdown-data");
       var converter = new showdown.Converter();
       let htmlText = converter.makeHtml(d.data.datasets[0].string);
       let markdownDataDiv = document.createElement("div");
@@ -261,7 +264,14 @@ function addObjectsToScene(data, textureImage) {
   let threeMesh = new THREE.Object3D();
   let volumes = data.volumes;
   let labels = data.labels;
+
+  if (labels.length < 1) {
+    let showLabelsBtn = document.querySelector(".show-labels-btn");
+    showLabelsBtn.classList.add("removed");
+  }
+
   let dashboardData = data.dashBoard;
+  let markdownData = document.querySelector(".markdown-data");
 
   if (dashboardData) {
     createDashboard(dashboardData);
@@ -322,18 +332,22 @@ function addObjectsToScene(data, textureImage) {
 
   // fitCameraToSelection(camera, controls, selection);
 }
+
 function onShowData() {
   let dataLabels = document.getElementById("labels2d");
   let dataBtn = document.querySelector(".data-btn");
-  // let showData = document.getElementById("showData");
+  let showLabels = document.querySelector(".show-labels-btn");
+  console.log(showLabels);
   if (dataLabels.style.display == "none") {
     dataLabels.style.display = "block";
-    dataBtn.classList.add("data-btn-active");
-    // showData.innerHTML = "Hide Data";
+    showLabels.classList.add("active");
+    // dataBtn.classList.add("data-btn-active");
+    // showLabels.textContent = "Hide Data";
   } else {
     dataLabels.style.display = "none";
-    dataBtn.classList.remove("data-btn-active");
-    // showData.innerHTML = "Show Data";
+    showLabels.classList.remove("active");
+    // dataBtn.classList.remove("data-btn-active");
+    // showLabels.textContent = "Show Data";
   }
 }
 
@@ -372,8 +386,8 @@ function init() {
 
     (async () => {
       let model = await getModelFromContentful(modelName);
-      // let inputPassword = window.prompt("Enter password");
-      let inputPassword = "hello";
+      let inputPassword = window.prompt("Enter password");
+      // let inputPassword = "hello";
 
       if (inputPassword == model.password) {
         let modelHeader = document.querySelector(".model-header");
@@ -410,11 +424,11 @@ function init() {
             btn.classList.remove("removed");
           });
         });
-        await createComponents();
       } else {
         window.alert("The password you entered was incorrect");
         window.location.reload();
       }
+      await createComponents();
     })();
   } else {
     let canvas = document.querySelector("#canvas");
@@ -440,6 +454,9 @@ function init() {
     (async () => {
       let m = await getModelsFromContentful();
       let models = m.models;
+      let modelsContainer = document.createElement("div");
+      document.body.appendChild(modelsContainer);
+      modelsContainer.classList.add("models-container");
       models.forEach((m) => {
         let div = document.createElement("div");
         div.classList.add("model-div");
@@ -450,10 +467,11 @@ function init() {
         p.innerText = m.fields.shortDescription;
         a.href = m.fields.slug;
         a.appendChild(h);
-        document.body.appendChild(div);
+        modelsContainer.appendChild(div);
         div.appendChild(a);
         div.appendChild(p);
       });
+
       document.getElementById("loader").style.display = "none";
     })();
   }
@@ -467,7 +485,7 @@ function createGallery(modelImages) {
     a.setAttribute("data-lightbox", `image-${i}`);
     a.href = image.fields.file.url;
     let imgDiv = document.createElement("div");
-    imgDiv.classList.add("img-container");
+    imgDiv.classList.add("gallery-img-container");
     let img = document.createElement("img");
     img.src = image.fields.file.url;
     img.classList.add("gallery-image");
@@ -519,6 +537,12 @@ function createComponents() {
 
     let infoPage = document.querySelector(".info-page");
     let settingsPage = document.querySelector(".settings-page");
+
+    let showLabelsBtn = document.querySelector(".show-labels-btn");
+
+    showLabelsBtn.addEventListener("click", () => {
+      onShowData();
+    });
 
     drawerBtns.forEach((drawerBtn) => {
       drawerBtn.addEventListener("click", (e) => {
@@ -723,10 +747,22 @@ function onSettingsChange(element) {
     document.getElementById("loader").style.display = "none";
     await removeObjectsFromScene();
     let charts = document.querySelectorAll(".chart-canvas");
+    let dashboardImages = document.querySelectorAll(".img-container");
+    let markdownDatas = document.querySelectorAll(".markdown-data");
 
     if (charts) {
       charts.forEach((chart) => {
         chart.remove();
+      });
+    }
+    if (dashboardImages) {
+      dashboardImages.forEach((img) => {
+        img.remove();
+      });
+    }
+    if (markdownDatas) {
+      markdownDatas.forEach((data) => {
+        data.remove();
       });
     }
 
