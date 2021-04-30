@@ -97,12 +97,23 @@ app.get("/modelData/:modelName/", async (request, response) => {
     for (var propName in request.query) {
       if (request.query.hasOwnProperty(propName)) {
         let par = new RhinoCompute.Grasshopper.DataTree("RH_IN:" + propName);
+
         let paramValue = request.query[propName];
+        // if (propName == "Building_Type") {
+        //   paramValue = "1";
+        //   par.append([0], [paramValue]);
+        // } else if (propName == "Options") {
+        //   paramValue = "Option 01";
+        //   par.append([0], [paramValue]);
+        // } else {
+        //   par.append([0], [paramValue]);
+        // }
+
         par.append([0], [paramValue]);
+
         trees.push(par);
       }
     }
-
     RhinoCompute.Grasshopper.evaluateDefinition(definition, trees).then(
       (result) => {
         let rhOutGeometry = null;
@@ -111,25 +122,6 @@ app.get("/modelData/:modelName/", async (request, response) => {
         let rhOutText = null;
         let rhOutTextPt = null;
         let rhOutDashboard = null;
-
-        // for (let i = 0; i < result.values.length; i++) {
-        //   if (
-        //     result.values[i].ParamName === "RH_OUT:Mesh" ||
-        //     result.values[i].ParamName === "RH_OUT:MESH" ||
-        //     result.values[i].ParamName === "RH_OUT:GEO"
-        //   ) {
-        //     rhOutGeometry = result.values[i].InnerTree["{ 0; }"];
-        //   }
-        //   if (result.values[i].ParamName === "RH_OUT:Material") {
-        //     rhOutMaterial = result.values[i].InnerTree["{ 0; }"];
-        //   }
-        //   if (result.values[i].ParamName === "RH_OUT:Text") {
-        //     rhOutText = result.values[i].InnerTree["{ 0; }"];
-        //   }
-        //   if (result.values[i].ParamName === "RH_OUT:TextPt") {
-        //     rhOutTextPt = result.values[i].InnerTree["{ 0; }"];
-        //   }
-        // }
 
         for (let i = 0; i < result.values.length; i++) {
           let outputParamValue = result.values[i].InnerTree["{0}"];
