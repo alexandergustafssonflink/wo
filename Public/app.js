@@ -154,6 +154,9 @@ function createDashboard(data, i) {
   let settingsPage = document.querySelector(".settings-page");
   let id = 0;
 
+  let string = JSON.stringify(data);
+  console.log(string);
+
   let chartTypes = [
     "doughnut",
     "line",
@@ -341,13 +344,9 @@ function onShowData() {
   if (dataLabels.style.display == "none") {
     dataLabels.style.display = "block";
     showLabels.classList.add("active");
-    // dataBtn.classList.add("data-btn-active");
-    // showLabels.textContent = "Hide Data";
   } else {
     dataLabels.style.display = "none";
     showLabels.classList.remove("active");
-    // dataBtn.classList.remove("data-btn-active");
-    // showLabels.textContent = "Show Data";
   }
 }
 
@@ -401,29 +400,33 @@ function init() {
         }
 
         let m1 = model.params;
-
+        console.log(m1);
         let newArr = [];
 
-        m1.forEach((m) => {
-          let parts = m.parts;
-          parts.forEach((p) => {
-            newArr.push(p.name + "=" + p.defaultValue);
+        if (m1 !== undefined) {
+          m1.forEach((m) => {
+            let parts = m.parts;
+            parts.forEach((p) => {
+              newArr.push(p.name + "=" + p.defaultValue);
+            });
           });
-        });
 
-        // params.forEach((p) => {});
+          // params.forEach((p) => {});
 
-        let query = newArr.join("&");
+          let query = newArr.join("&");
 
-        rhinoCall(query).then((data) => {
-          console.log("Geometry recieved");
-          document.getElementById("loader").style.display = "none";
-          addObjectsToScene(data, textureImage);
-          let drawerBtns = document.querySelectorAll(".drawer-btn");
-          drawerBtns.forEach((btn) => {
-            btn.classList.remove("removed");
+          rhinoCall(query).then((data) => {
+            console.log("Geometry recieved");
+            document.getElementById("loader").style.display = "none";
+            addObjectsToScene(data, textureImage);
+            let drawerBtns = document.querySelectorAll(".drawer-btn");
+            drawerBtns.forEach((btn) => {
+              btn.classList.remove("removed");
+            });
           });
-        });
+        } else {
+          console.log("Hello");
+        }
       } else {
         window.alert("The password you entered was incorrect");
         window.location.reload();
@@ -543,7 +546,7 @@ function createComponents() {
     showLabelsBtn.addEventListener("click", () => {
       onShowData();
     });
-
+    let canvas = document.querySelector("#canvas");
     drawerBtns.forEach((drawerBtn) => {
       drawerBtn.addEventListener("click", (e) => {
         let btn;
@@ -708,10 +711,6 @@ function toggleMenu(e) {
 
 function addSliderLogic() {
   let sliders = document.querySelectorAll(".slider");
-  // https://stackoverflow.com/questions/10756313/javascript-jquery-map-a-range-of-numbers-to-another-range-of-numbers
-  // const scale = (num, in_min, in_max, out_min, out_max) => {
-  //   return ((num - in_min) * (out_max - out_min)) / (in_max - in_min) + out_min;
-  // };
 
   let labels = document.querySelectorAll("label");
 
