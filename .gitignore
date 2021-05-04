@@ -1,3 +1,5 @@
 /.env
 
+/Models
+
 **/node_modules
