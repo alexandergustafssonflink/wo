@@ -154,9 +154,6 @@ function createDashboard(data, i) {
   let settingsPage = document.querySelector(".settings-page");
   let id = 0;
 
-  let string = JSON.stringify(data);
-  console.log(string);
-
   let chartTypes = [
     "doughnut",
     "line",
