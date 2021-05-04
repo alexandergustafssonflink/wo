@@ -99,15 +99,15 @@ app.get("/modelData/:modelName/", async (request, response) => {
         let par = new RhinoCompute.Grasshopper.DataTree("RH_IN:" + propName);
 
         let paramValue = request.query[propName];
-        // if (propName == "Building_Type") {
-        //   paramValue = "1";
-        //   par.append([0], [paramValue]);
-        // } else if (propName == "Options") {
-        //   paramValue = "Option 01";
-        //   par.append([0], [paramValue]);
-        // } else {
-        //   par.append([0], [paramValue]);
-        // }
+        if (propName == "Building_Type") {
+          paramValue = "1";
+          par.append([0], [paramValue]);
+        } else if (propName == "Options") {
+          paramValue = "1";
+          par.append([0], [paramValue]);
+        } else {
+          par.append([0], [paramValue]);
+        }
 
         par.append([0], [paramValue]);
 
@@ -126,6 +126,8 @@ app.get("/modelData/:modelName/", async (request, response) => {
         for (let i = 0; i < result.values.length; i++) {
           let outputParamValue = result.values[i].InnerTree["{0}"];
           if (outputParamValue == null) {
+            outputParamValue = result.values[i].InnerTree["{ 0; }"];
+          } else if (outputParamValue == undefined) {
             outputParamValue = result.values[i].InnerTree["{ 0; }"];
           }
 
