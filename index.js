@@ -213,5 +213,5 @@ app.get("/modelData/:modelName/", async (request, response) => {
 });
 
 app.get("*", function (req, res) {
-  res.sendFile(__dirname + "/public/index.html");
+  res.sendFile(__dirname + "/Public/index.html");
 });

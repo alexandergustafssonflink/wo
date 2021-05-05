@@ -397,7 +397,6 @@ function init() {
         }
 
         let m1 = model.params;
-        console.log(m1);
         let newArr = [];
 
         if (m1 !== undefined) {
@@ -408,12 +407,9 @@ function init() {
             });
           });
 
-          // params.forEach((p) => {});
-
           let query = newArr.join("&");
 
           rhinoCall(query).then((data) => {
-            console.log("Geometry recieved");
             document.getElementById("loader").style.display = "none";
             addObjectsToScene(data, textureImage);
             let drawerBtns = document.querySelectorAll(".drawer-btn");
@@ -661,7 +657,6 @@ function createComponents() {
         input.name = p.name;
       });
       let sliders = document.querySelectorAll(".slider");
-      console.log("ADDEED LOGIC");
 
       let labels = document.querySelectorAll("label");
 
