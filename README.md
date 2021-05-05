@@ -54,7 +54,7 @@ Below to the right in the image you see how the logo will be displayed on the we
 
 9. Choose images that will be added as a gallery along with information regarding the model. Do so by pressing "+ Add media". Please see instructions in #7 for a more detailed description on how contentful handles media.
 
-   Below you see how it will look when the title (up to the left, description and image gallery are displayed on the web page:
+   Below you see how it will look when the title (up to the left on the screen), description and image gallery are displayed on the web page:
 
    <img src="/readme-images/menu.png" width="100%">
 
