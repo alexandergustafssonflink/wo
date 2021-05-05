@@ -4,6 +4,18 @@ White out is a web application that dynamically handles 3d-models in grasshopper
 
 It was built with great help from [Express.js](https://github.com/expressjs/express), [RhinoCompute](https://github.com/mcneel/compute.rhino3d), [three.js](https://github.com/mrdoob/three.js/) and [Contentful](https://www.contentful.com/).
 
+### INSTALLATION
+
+-- Download the project --
+
+1.  Go to the root folder of the project
+2.  Check version of node by writing node -v in the terminal. You will need a version that is 14.0 or newer.
+3.  Write npm install in the terminal.
+    (the dependencies should be installed)
+4.  Start the project by writing node index.js in the terminal.
+5.  The project will start and the page should be available in the browser at localhost:3000.
+    (If you wish to change the port you do it by changing the PORT value in the .env-file.)
+
 ### ADD A NEW MODEL
 
 1. Add the gh-file to the project folder called “Models”. Save the name of the file for later.
@@ -36,7 +48,15 @@ It was built with great help from [Express.js](https://github.com/expressjs/expr
 
 8. Add a logo that will be visible along with the model in the browser by pressing "+ Add media". Please see instructions in #7 for a more detailed description on how contentful handles media.
 
+Below you see how the logo will be displayed on the website.
+
+   <img src="/readme-images/logo.png" width="100%">
+
 9. Choose images that will be added as a gallery along with information regarding the model. Do so by pressing "+ Add media". Please see instructions in #7 for a more detailed description on how contentful handles media.
+
+   Below you see how it will look when the title, description and images are displayed on the web page:
+
+   <img src="/readme-images/menu.png" width="100%">
 
 10. If you wish, set a starting camera position for the model. This will edit the angle of which the model is displayed in the browser. It takes a JSON-object with x y and z-parameters. Example: {"x": -20000, "y": 70000, "z": -150000}. If you leave this field empty, a standardised camera angle will be set.
 
@@ -71,7 +91,7 @@ There are 3 types of dashboard-data that are acceptable to include in the grassh
 
 - that the name of the model-file is the same as the slug in contentful. If you named the model “200-yr-pavilion.gh”, the slug must be 200-yr-pavilion.
 
-- that the parameters in the grasshopper file is the same as the ones you put in the JSON-object in contentful
+- that the parameters in the grasshopper file is the same as the ones you put in the JSON-object in contentful.
 
 ### BACKLOG
 
